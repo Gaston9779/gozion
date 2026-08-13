@@ -22,7 +22,13 @@ export function Button({ variant = "default", size = "md", className, style, typ
 export function IconButton({ label, children, ...props }: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> & BaseProps & { label: string }) { return <Button aria-label={label} className="ui-icon-button" {...props}>{children}</Button>; }
 export const CloseButton = (props: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">) => <Button aria-label="Close" {...props}>×</Button>;
 export function CopyButton({ value, ...props }: { value: string } & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children">) { const [copied, setCopied] = React.useState(false); return <Button onClick={async () => { await navigator.clipboard.writeText(value); setCopied(true); }} {...props}>{copied ? "Copied" : "Copy"}</Button>; }
-export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) { return <input className={cx("ui-input ui-focusable", className)} {...props} />; }
+export type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> & { size?: Size; status?: "default" | "success" | "error"; color?: string; borderColor?: string; borderWidth?: string };
+export function Input({ className, size = "md", status = "default", color, borderColor, borderWidth, style, ...props }: InputProps) {
+  return <input className={cx("ui-input ui-focusable", className)} data-size={size} data-status={status} aria-invalid={status === "error" || undefined} style={vars({ color, "--ui-border-color": borderColor, "--ui-border-width": borderWidth, ...style } as CSSVars)} {...props} />;
+}
+export function FormControl({ label, hint, error, children, className }: { label?: React.ReactNode; hint?: React.ReactNode; error?: React.ReactNode; children: React.ReactNode; className?: string }) {
+  return <label className={cx("ui-form-control", className)}>{label && <span className="ui-form-label">{label}</span>}{children}{error ? <small className="ui-form-error">{error}</small> : hint ? <small className="ui-form-hint">{hint}</small> : null}</label>;
+}
 export function Textarea({ className, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement>) { return <textarea className={cx("ui-input ui-focusable", className)} {...props} />; }
 export function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) { return <select className={cx("ui-input ui-focusable", className)} {...props} />; }
 export function Checkbox({ children, className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) { return <label className={cx("ui-focusable", className)}><input type="checkbox" {...props} /> {children}</label>; }

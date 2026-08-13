@@ -159,7 +159,10 @@
     }
   }
   function codeExample(name, props = {}) {
-    if (name === 'Kbd') return kbdCode(['⌘','K']);
+    if (name === 'Kbd') {
+      const keys = props.keys || [props.modifier,props.key1,props.key2,props.key3].filter(Boolean);
+      return kbdCode(keys.length ? keys : ['⌘','K']);
+    }
     const particle = particleEffect(name);
     if (particle) {
       const controls = getParticleControls(particle.slug);
@@ -195,9 +198,11 @@
       return `<Button onClick={continueFlow} loading={isSubmitting}>\n  <Icon name="arrow-right" /> Continue\n</Button>`;
     }
     if (name === 'Input') {
-      if (state.framework === 'Vue') return `<FormControl label="Email" hint="We'll never share it.">\n  <Input v-model="email" placeholder="you@company.com" />\n</FormControl>`;
-      if (state.framework === 'Angular') return `<ui-form-control label="Email" hint="We'll never share it."><ui-input [(ngModel)]="email" placeholder="you@company.com"></ui-input></ui-form-control>`;
-      return `<FormControl label="Email" hint="We'll never share it.">\n  <Input value={email} onChange={setEmail} placeholder="you@company.com" />\n</FormControl>`;
+      const label = props.label || 'Email', hint = props.hint || "We never share your email.", placeholder = props.placeholder || 'you@company.com';
+      const common = componentCodeProps(props, new Set(['label','hint','placeholder']));
+      if (state.framework === 'Vue') return `<FormControl label="${quote(label)}" hint="${quote(hint)}">\n  <Input v-model="email" placeholder="${quote(placeholder)}"${vueAttrs(common)} />\n</FormControl>`;
+      if (state.framework === 'Angular') return `<ui-form-control label="${quote(label)}" hint="${quote(hint)}"><ui-input [(value)]="email" placeholder="${quote(placeholder)}"${angularAttrs(common)}></ui-input></ui-form-control>`;
+      return `<FormControl label="${quote(label)}" hint="${quote(hint)}">\n  <Input value={email} onChange={event => setEmail(event.target.value)} placeholder="${quote(placeholder)}"${reactAttrs(common)} />\n</FormControl>`;
     }
     if (name === 'Select') {
       if (state.framework === 'Vue') return `<Select v-model="role" :options="roles" label="Role" />`;
@@ -228,6 +233,33 @@
     const child = ['Input','Textarea','Select','Image','Spinner','Divider'].includes(name) ? '' : (state.locale === 'it' ? 'Contenuto' : 'Content');
     if (state.framework === 'Angular') return `<ui-${slug(name)}${attrs ? ' '+attrs : ''}>${child}</ui-${slug(name)}>`;
     return `<${name}${attrs ? ' '+attrs : ''}>${child}</${name}>`;
+  }
+  function componentCodeProps(props, omitted = new Set()) {
+    return Object.fromEntries(Object.entries(props).filter(([key, value]) => !omitted.has(key) && value !== '' && value !== undefined && value !== false));
+  }
+  const quote = value => String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  function reactAttrs(props) { return Object.entries(props).map(([key,value]) => value === true ? ` ${key}` : typeof value === 'number' ? ` ${key}={${value}}` : ` ${key}="${quote(value)}"`).join(''); }
+  function vueAttrs(props) { return Object.entries(props).map(([key,value]) => value === true ? ` :${key}="true"` : typeof value === 'number' ? ` :${key}="${value}"` : ` ${key}="${quote(value)}"`).join(''); }
+  function angularAttrs(props) { return Object.entries(props).map(([key,value]) => typeof value === 'boolean' || typeof value === 'number' ? ` [${key}]="${value}"` : ` ${key}="${quote(value)}"`).join(''); }
+  function liveCodeExample(item, props) {
+    if (item.name === 'Input' || item.name === 'Table' || particleEffect(item.name) || item.name === 'Kbd') return codeExample(item.name, props);
+    const child = props.children || '';
+    const values = componentCodeProps(props, new Set(['children']));
+    if (state.framework === 'Vue') return `<${item.name}${vueAttrs(values)}>${child}</${item.name}>`;
+    if (state.framework === 'Angular') return `<ui-${slug(item.name)}${angularAttrs(values)}>${child}</ui-${slug(item.name)}>`;
+    return `<${item.name}${reactAttrs(values)}>${child}</${item.name}>`;
+  }
+  function previewProps(item) {
+    const controls = $('.preview-controls');
+    const props = Object.fromEntries($$('[data-option]', controls).map(input => [input.dataset.option, input.type === 'checkbox' ? input.checked : input.value]));
+    const slots = $('#component-preview')._textSlots || [];
+    slots.forEach(slot => { props[slot.prop] = slot.get(); });
+    if (item.name === 'Kbd') props.keys = [props.modifier,props.key1,props.key2,props.key3].filter(Boolean);
+    return props;
+  }
+  function syncFrameworkCode(item) {
+    if (state.framework === 'Preview') return;
+    $('#framework-content').innerHTML = codeBlock(liveCodeExample(item, previewProps(item)));
   }
   function kbdCode(keys) {
     if (state.framework === 'Vue') return `<span class="ui-kbd-shortcut">\n  ${keys.map(key => `<Kbd>${key}</Kbd>`).join(' + ')}\n</span>`;
@@ -289,7 +321,7 @@
     const borderless = new Set(['Text','Heading','Link','Kbd','List','Flex','Stack','Grid','Center','AspectRatio','Checkbox','Radio','RadioGroup','Switch','Slider','RangeSlider','Rating','Progress','Spinner','Skeleton','LoadingOverlay','EmptyState','Avatar','AvatarGroup','Badge','Chip','Tag','Timeline','Icon','Image','GradientSurface','Glow','Shine','Spotlight','Mask','Overlay','VisuallyHidden']);
     const staticComponents = new Set(['Text','Heading','Link','Kbd','List','Box','Flex','Stack','Grid','Center','Container','Divider','AspectRatio','Icon','Image','VisuallyHidden']);
     const colorControl = colorless.has(item.name) ? '' : `<label class="color-control">Color<input data-option="color" type="color" value="#5b55e7"></label>`;
-    const borderControls = borderless.has(item.name) ? '' : `<label class="color-control">Border color<input data-option="borderColor" type="color" value="#8f96a8"></label><label>Border<select data-option="border"><option value="0px">None</option><option value="1px" selected>Thin</option><option value="2px">Medium</option><option value="3px">Bold</option></select></label>`;
+    const borderControls = borderless.has(item.name) ? '' : `<label class="color-control">Border color<input data-option="borderColor" type="color" value="#8f96a8"></label><label>Border width<select data-option="borderWidth"><option value="0px">None</option><option value="1px" selected>Thin</option><option value="2px">Medium</option><option value="3px">Bold</option></select></label>`;
     const disabledControl = staticComponents.has(item.name) ? '' : `<label class="check-control"><input data-option="disabled" type="checkbox">${t('disabled')}</label>`;
     return `${contextual}${colorControl}${borderControls}${disabledControl}`;
   }
@@ -297,7 +329,7 @@
     Table:[['columns','Column[]','required','Header, key, and optional cell renderer definitions.'],['rows','Row[]','required','Data records rendered in the table body.'],['rowActions','(row) => ReactNode','—','Optional per-row action menu or buttons.'],['onRowClick','(row) => void','—','Called when a user activates a row.'],['emptyState','ReactNode','—','Content shown when rows is empty.']],
     Card:[['title','ReactNode','—','Heading content rendered in the card header.'],['actions','ReactNode','—','Header actions such as CardMenu or IconButton.'],['disabled','boolean','false','Applies a non-interactive visual state.'],['children','ReactNode','—','Card body content.']],
     Button:[['children','ReactNode','required','Label and optional icons or loading indicator.'],['onClick','() => void','—','Action callback.'],['loading','boolean','false','Replaces the label with progress feedback.'],['disabled','boolean','false','Prevents activation.']],
-    Input:[['label','ReactNode','—','Visible field label.'],['value','string','—','Controlled value.'],['onChange','(value) => void','—','Value change callback.'],['error','ReactNode','—','Validation message and invalid state.'],['placeholder','string','—','Short input hint.']],
+    Input:[['label','ReactNode','—','Visible field label.'],['hint','ReactNode','—','Supporting text displayed below the field.'],['value','string','—','Controlled value.'],['onChange','ChangeEventHandler','—','Native controlled-value callback.'],['error','ReactNode','—','Validation message and invalid state.'],['placeholder','string','—','Short input hint.'],['status','default | success | error','default','Validation state and semantic border colour.'],['size','sm | md | lg','md','Field density.'],['disabled','boolean','false','Prevents interaction.']],
     Select:[['options','Option[]','required','Value/label pairs rendered in the list.'],['value','string','—','Selected value.'],['onChange','(value) => void','—','Selection callback.'],['label','ReactNode','—','Visible field label.']],
     Dialog:[['open','boolean','false','Controls visibility.'],['onClose','() => void','required','Escape, close button, and backdrop callback.'],['title','ReactNode','required','Dialog heading announced to assistive technology.'],['children','ReactNode','required','Dialog body and footer content.']],
     Tabs:[['items','Tab[]','required','Tab labels, keys, disabled state, and optional icons.'],['activeKey','string','first item','Controlled active tab.'],['onChange','(key) => void','required','Called after keyboard or pointer selection.']],
@@ -312,6 +344,13 @@
     return `<table class="props-table" data-api-table><thead><tr><th>Prop / slot</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${rows.map(([prop,type,defaultValue,desc]) => `<tr><td><code>${prop}</code></td><td>${type}</td><td>${defaultValue}</td><td>${desc}</td></tr>`).join('')}</tbody></table>`;
   }
   const escAttr = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const textPropNames = {
+    Heading:['title','subtitle'], Input:['label','hint'], Textarea:['label','hint'], FormControl:['label','feedback'],
+    Alert:['title','description','actionLabel'], Sheet:['triggerLabel','title','primaryActionLabel','secondaryActionLabel'],
+    Drawer:['triggerLabel','title','description'], Dialog:['triggerLabel','title','description','cancelLabel','confirmLabel'],
+    AlertDialog:['triggerLabel','title','description','cancelLabel','confirmLabel'], Modal:['triggerLabel','title','description'],
+    EmptyState:['title','description','actionLabel'], Toast:['title','description'], Status:['title','description']
+  };
   function textSlotLabel(node, index, used) {
     const element = node.parentElement;
     const tag = element.tagName.toLowerCase();
@@ -326,6 +365,7 @@
       acceptNode(node) {
         const value = node.nodeValue.trim(), parent = node.parentElement;
         if (!value || !parent || parent.closest('script,style,svg,code,kbd,option')) return NodeFilter.FILTER_REJECT;
+        if (/^[×+−•⌄→‹›…✓?*]+$/.test(value)) return NodeFilter.FILTER_REJECT;
         return NodeFilter.FILTER_ACCEPT;
       }
     });
@@ -334,21 +374,47 @@
       const textNode = node;
       slots.push({ node: textNode, get: () => textNode.nodeValue.trim(), set: value => { textNode.nodeValue = value; } });
     }
-    $$('input[placeholder],textarea[placeholder],img[alt]').forEach(element => {
-      const attribute = element.hasAttribute('placeholder') ? 'placeholder' : 'alt';
-      slots.push({ node: element, attribute, get: () => element.getAttribute(attribute) || '', set: value => element.setAttribute(attribute, value) });
+    $$('input[placeholder],textarea[placeholder]', stage).forEach(element => slots.push({ node: element, attribute:'placeholder', get: () => element.placeholder, set: value => { element.placeholder = value; } }));
+    $$('input[value]:not([type="range"]):not([type="color"]):not([type="checkbox"]):not([type="radio"]),textarea', stage).forEach(element => {
+      if (!element.value) return;
+      slots.push({ node: element, attribute:'value', get: () => element.value, set: value => { element.value = value; element.setAttribute('value', value); } });
     });
+    if (item.category === 'Media') $$('img[alt]', stage).forEach(element => slots.push({ node: element, attribute:'alt', get: () => element.alt, set: value => { element.alt = value; } }));
     if (!slots.length) return;
     const used = new Map();
-    const definitions = slots.map((slot, index) => ({ ...slot, label: slot.attribute === 'placeholder' ? 'Placeholder' : slot.attribute === 'alt' ? 'Alternative text' : textSlotLabel(slot.node, index, used), value: slot.get() }));
+    const propCounts = new Map();
+    const definitions = slots.map((slot, index) => {
+      const label = slot.attribute === 'placeholder' ? 'Placeholder' : slot.attribute === 'value' ? 'Value' : slot.attribute === 'alt' ? 'Alternative text' : textSlotLabel(slot.node, index, used);
+      const baseProp = slot.attribute || textPropNames[item.name]?.[index] || (index === 0 ? 'children' : `text${index + 1}`);
+      const propCount = (propCounts.get(baseProp) || 0) + 1; propCounts.set(baseProp, propCount);
+      const prop = propCount === 1 ? baseProp : `${baseProp}${propCount}`;
+      return { ...slot, label, prop, value: slot.get() };
+    });
     stage._textSlots = definitions;
     controls.insertAdjacentHTML('afterbegin', definitions.map((slot, index) => `<label class="text-slot-control"><span>${slot.label}</span><input data-text-slot="${index}" type="text" value="${escAttr(slot.value)}" aria-label="${escAttr(slot.label)}"></label>`).join(''));
     const api = $('[data-api-table] tbody');
-    if (api) api.insertAdjacentHTML('beforeend', definitions.map((slot, index) => `<tr><td><code>text.${slug(slot.label)}</code></td><td>string</td><td>${esc(slot.value)}</td><td>${esc(slot.label)} editable text slot shown in the preview.</td></tr>`).join(''));
+    if (api) {
+      const existing = new Set($$('td:first-child code', api).map(code => code.textContent));
+      api.insertAdjacentHTML('beforeend', definitions.filter(slot => !existing.has(slot.prop)).map(slot => `<tr><td><code>${slot.prop}</code></td><td>string</td><td>${esc(slot.value)}</td><td>${esc(slot.label)} editable text slot shown in the preview.</td></tr>`).join(''));
+    }
     $$('[data-text-slot]', controls).forEach(input => input.addEventListener('input', event => {
       const slot = stage._textSlots[Number(event.currentTarget.dataset.textSlot)];
       if (slot) slot.set(event.currentTarget.value);
+      syncFrameworkCode(item);
     }));
+  }
+  function hydrateControlApi() {
+    const body = $('[data-api-table] tbody'), controls = $('.preview-controls');
+    if (!body || !controls) return;
+    const existing = new Set($$('td:first-child code', body).map(code => code.textContent));
+    const rows = $$('[data-option]', controls).filter(control => !existing.has(control.dataset.option)).map(control => {
+      const prop = control.dataset.option, label = control.closest('label')?.textContent.trim() || prop;
+      const type = control.type === 'checkbox' ? 'boolean' : control.type === 'range' ? 'number' : 'string';
+      const value = control.type === 'checkbox' ? String(control.checked) : control.value;
+      existing.add(prop);
+      return `<tr><td><code>${prop}</code></td><td>${type}</td><td>${esc(value)}</td><td>${esc(label)} preview property.</td></tr>`;
+    });
+    body.insertAdjacentHTML('beforeend', rows.join(''));
   }
   function renderSidebar() {
     const tree = (label, links) => `<section class="side-tree"><h2>${label}</h2><div class="side-tree-links">${links}</div></section>`;
@@ -433,7 +499,9 @@
     main.innerHTML = `<div class="crumbs"><a href="#/getting-started">${t('docs')}</a><span>/</span><a href="#/components">${t('components')}</a><span>/</span><span>${title(item.name)}</span></div><p class="eyebrow">${item.category} · ${t(item.status)}</p><h1 class="page-title">${title(item.name)}</h1><p class="page-intro">${description(item)}</p><h2 class="section-title">${t('live')}</h2><div class="preview-panel"><div class="preview-stage" id="component-preview">${componentPreview(item.name)}</div><div class="preview-controls">${previewControls(item)}</div></div><div class="framework-tabs">${['Preview','React','Vue','Angular'].map(tab => `<button class="${state.framework === tab ? 'active' : ''}" data-framework="${tab}">${tab === 'Preview' ? t('preview') : tab}</button>`).join('')}</div><div id="framework-content">${state.framework === 'Preview' ? `<div class="preview-note">${state.locale === 'it' ? 'Interagisci direttamente con il componente qui sopra.' : 'Interact directly with the component above.'}</div>` : codeBlock(codeExample(item.name,{variant:'primary',size:'md'}))}</div><h2 class="section-title">${t('install')}</h2>${codeBlock(`npx gozion-ui@latest add ${slug(item.name)}`)}<h2 class="section-title">${t('usage')}</h2>${codeBlock(`import { ${item.name} } from '@gozion-ui/${state.framework === 'Angular' ? 'angular' : state.framework === 'Vue' ? 'vue' : 'react'}';\n\n${codeExample(item.name)}`)}<h2 class="section-title">${t('custom')}</h2><p class="section-intro">${state.locale === 'it' ? 'Varianti semantiche per il flusso normale, token locali per il controllo preciso.' : 'Semantic variants for the common path, local tokens for precise control.'}</p>${codeBlock(`.my-${slug(item.name)} {\n  --ui-primary: #5b55e7;\n  --ui-radius: .625rem;\n}`)}<h2 class="section-title">${t('a11y')}</h2><div class="a11y-note"><strong>${state.locale === 'it' ? 'Tastiera e screen reader.' : 'Keyboard and screen reader.'}</strong> ${state.locale === 'it' ? 'Focus visibile, semantica nativa, contrasto verificabile e movimento ridotto sono parte del contratto del componente.' : 'Visible focus, native semantics, verifiable contrast, and reduced motion are part of the component contract.'}</div><h2 class="section-title">${t('api')}</h2><table class="props-table"><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>variant</code></td><td>string</td><td>primary</td><td>${t('variant')}</td></tr><tr><td><code>size</code></td><td>sm | md | lg</td><td>md</td><td>${t('size')}</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>false</td><td>${t('disabled')}</td></tr></tbody></table><nav class="page-nav">${previous ? `<a href="#/components/${slug(previous.name)}">← ${title(previous.name)}</a>` : '<span></span>'}${next ? `<a href="#/components/${slug(next.name)}">${title(next.name)} →</a>` : '<span></span>'}</nav>`;
     const genericApi = $('.props-table'); if (genericApi) genericApi.outerHTML = apiTable(item.name);
     hydrateTextControls(item);
+    hydrateControlApi();
     bindPreviewOptions(item);
+    syncFrameworkCode(item);
     initParticleLogos(main);
     initBackgroundPreviews(main);
   }
@@ -470,9 +538,12 @@
         $$('output', document.querySelector('.preview-controls')).forEach(output => { const input = output.parentElement.querySelector('input[type=range]'); if (input) output.textContent = input.value; });
         return;
       }
-      stage.dataset.size = options.size || 'md'; stage.dataset.status = options.status || options.tone || 'default'; stage.dataset.density = options.density || 'comfortable'; stage.dataset.align = options.align || 'center'; stage.dataset.placement = options.placement || 'center'; stage.dataset.animated = options.animated === false ? 'false' : 'true'; stage.dataset.disabled = String(Boolean(options.disabled)); stage.style.setProperty('--preview-intensity', `${options.intensity || 70}%`); stage.style.setProperty('--ui-primary', options.color || '#5b55e7'); stage.style.setProperty('--ui-focus-ring', options.color || '#5b55e7'); stage.style.setProperty('--ui-border-color', options.borderColor || '#8f96a8'); stage.style.setProperty('--preview-border-width', options.border || '1px'); stage.setAttribute('aria-disabled', String(Boolean(options.disabled)));
+      stage.dataset.size = options.size || 'md'; stage.dataset.status = options.status || options.tone || 'default'; stage.dataset.density = options.density || 'comfortable'; stage.dataset.align = options.align || 'center'; stage.dataset.placement = options.placement || 'center'; stage.dataset.animated = options.animated === false ? 'false' : 'true'; stage.dataset.disabled = String(Boolean(options.disabled)); stage.style.setProperty('--preview-intensity', `${options.intensity || 70}%`); stage.style.setProperty('--ui-primary', options.color || '#5b55e7'); stage.style.setProperty('--ui-focus-ring', options.color || '#5b55e7'); stage.style.setProperty('--ui-border-color', options.borderColor || '#8f96a8'); stage.style.setProperty('--preview-border-width', options.borderWidth || '1px'); stage.setAttribute('aria-disabled', String(Boolean(options.disabled)));
+      const statusColor = options.status === 'success' || options.tone === 'success' ? '#1c9b6c' : options.status === 'error' || options.tone === 'danger' ? '#dc3545' : options.color || '#5b55e7';
+      stage.style.setProperty('--ui-primary', statusColor); stage.style.setProperty('--ui-focus-ring', statusColor); stage.style.setProperty('--ui-border-color', options.status && options.status !== 'default' ? statusColor : options.borderColor || '#8f96a8');
       $$('button,input,select,textarea', stage).forEach(element => { element.disabled = Boolean(options.disabled); });
       const primary = $('.pv-button', stage); if (primary && options.variant) primary.dataset.variant = options.variant;
+      syncFrameworkCode(item);
     };
     $$('[data-option],[data-particle-option]').forEach(control => { control.addEventListener('input', updatePreview); control.addEventListener('change', updatePreview); });
   }
@@ -553,7 +624,17 @@
     $$('.pv-context [data-context]:not([hidden])').forEach(panel => { if (!panel.closest('.pv-context').contains(event.target)) panel.hidden = true; });
     $$('.pv-card-menu:not([hidden])').forEach(panel => { if (!panel.closest('.pv-card').contains(event.target)) panel.hidden = true; });
     const componentLink = event.target.closest('[data-component-link]'); if (componentLink && !event.target.closest('button,input,select,a')) { location.hash = '#/'+componentLink.dataset.componentLink; return; }
-    const framework = event.target.closest('[data-framework]'); if (framework) { state.framework = framework.dataset.framework; const item = findComponent(location.hash.slice(14)); if (item) renderComponent(item); return; }
+    const framework = event.target.closest('[data-framework]'); if (framework) {
+      state.framework = framework.dataset.framework;
+      $$('[data-framework]').forEach(tab => tab.classList.toggle('active', tab === framework));
+      const path = location.hash.split('/').pop(), item = findComponent(path);
+      if (state.framework === 'Preview') $('#framework-content').innerHTML = `<div class="preview-note">${state.locale === 'it' ? 'Interagisci direttamente con il componente qui sopra.' : 'Interact directly with the component above.'}</div>`;
+      else if (item) {
+        const particleControl = $('[data-particle-option]');
+        if (particleControl) particleControl.dispatchEvent(new Event('input', {bubbles:true})); else syncFrameworkCode(item);
+      }
+      return;
+    }
     const copyCode = event.target.closest('[data-copy-code]'); if (copyCode) { navigator.clipboard.writeText(copyCode.parentElement.querySelector('code').innerText); copyCode.textContent = t('copied'); setTimeout(() => copyCode.textContent = t('copy'),1200); return; }
     const copyValue = event.target.closest('[data-copy-value]'); if (copyValue) { navigator.clipboard.writeText(copyValue.dataset.copyValue); copyValue.textContent = t('copied'); return; }
     const star = event.target.closest('[data-star]'); if (star) { const rating = Number(star.dataset.star); $$('[data-star]',star.parentElement).forEach(button => button.classList.toggle('on',Number(button.dataset.star)<=rating)); $('output',star.parentElement).textContent = rating+'.0'; return; }

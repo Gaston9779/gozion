@@ -23,11 +23,18 @@ describe('documentation catalogue', () => {
     expect(source).not.toContain('<a class="component-card"');
   });
 
-  it('provides universal disabled, color, and border controls', () => {
+  it('provides documented disabled, color, and border controls', () => {
     expect(source).toContain('data-option="disabled"');
     expect(source).toContain('data-option="color"');
     expect(source).toContain('data-option="borderColor"');
-    expect(source).toContain('data-option="border"');
+    expect(source).toContain('data-option="borderWidth"');
+  });
+
+  it('keeps text fields scoped to the active preview and synchronizes generated code', () => {
+    expect(source).toContain("$$('input[placeholder],textarea[placeholder]', stage)");
+    expect(source).toContain('syncFrameworkCode(item)');
+    expect(source).toContain('liveCodeExample(item, previewProps(item))');
+    expect(source).not.toContain('data-option="children"');
   });
 
   it('gives Kbd shortcut-specific controls instead of visual token controls', () => {

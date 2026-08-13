@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, HostBinding, Input, ViewEncapsulation } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, HostBinding, Input, Output, ViewEncapsulation } from "@angular/core";
 import type { Size, Variant } from "@gozion-ui/core";
+
+@Component({ selector:"ui-input", standalone:true, template:"<input class=\"ui-input ui-focusable\" [attr.data-size]=\"size\" [attr.data-status]=\"status\" [attr.aria-invalid]=\"status === 'error' || null\" [style.color]=\"color\" [style.--ui-border-color]=\"borderColor\" [style.--ui-border-width]=\"borderWidth\" [attr.placeholder]=\"placeholder\" [value]=\"value\" [disabled]=\"disabled\" (input)=\"valueChange.emit($any($event.target).value)\" />", encapsulation:ViewEncapsulation.None, changeDetection:ChangeDetectionStrategy.OnPush })
+export class InputComponent { @Input() size: Size = "md"; @Input() status: "default"|"success"|"error" = "default"; @Input() color?: string; @Input() borderColor?: string; @Input() borderWidth?: string; @Input() placeholder?: string; @Input() value = ""; @Output() valueChange = new EventEmitter<string>(); @Input() disabled = false; }
+
+@Component({ selector:"ui-form-control", standalone:true, template:"<label class=\"ui-form-control\"><span class=\"ui-form-label\">{{label}}</span><ng-content /><small class=\"ui-form-error\" [hidden]=\"!error\">{{error}}</small><small class=\"ui-form-hint\" [hidden]=\"error || !hint\">{{hint}}</small></label>", encapsulation:ViewEncapsulation.None, changeDetection:ChangeDetectionStrategy.OnPush })
+export class FormControlComponent { @Input() label = ""; @Input() hint = ""; @Input() error = ""; }
 
 @Component({ selector:"ui-button", standalone:true, template:"<button class=\"ui-component ui-focusable ui-button\" [attr.data-variant]=\"variant\" [attr.data-size]=\"size\" [disabled]=\"disabled\" [attr.type]=\"type\"><ng-content /></button>", encapsulation:ViewEncapsulation.None, changeDetection:ChangeDetectionStrategy.OnPush })
 export class ButtonComponent { @Input() variant: Variant = "default"; @Input() size: Size = "md"; @Input() disabled = false; @Input() type = "button"; }
