@@ -63,7 +63,7 @@
       return wrap(`<div class="pv-background-effect" data-background-effect="${particle.slug}" data-particle-preview="${compact ? 'card' : 'detail'}" aria-label="${particle.name}: ${particle.description}"></div>`);
     }
     switch (name) {
-      case 'Box': return wrap('<div class="pv-box"><span>Box</span></div>');
+      case 'Box': return wrap('<div class="pv-box" aria-label="Empty Box container"></div>');
       case 'Flex': return wrap('<div class="pv-flex"><i></i><i></i><i></i></div>');
       case 'Stack': return wrap('<div class="pv-stack"><i></i><i></i><i></i></div>');
       case 'Grid': return wrap('<div class="pv-grid">'+('<i></i>'.repeat(6))+'</div>');
@@ -108,9 +108,9 @@
       case 'TreeView': return wrap('<div class="pv-tree"><button>⌄ src</button><button class="child">⌄ components</button><button class="leaf">◇ Button.tsx</button><button class="leaf">◇ Input.tsx</button></div>');
       case 'Dialog': return wrap('<button class="pv-button" data-action="dialog">Open dialog</button><div class="pv-overlay-card" data-overlay hidden><div><b>Publish changes?</b><p>Your update will be visible to everyone.</p><footer><button data-action="close-overlay">Cancel</button><button class="primary" data-action="close-overlay">Publish</button></footer></div></div>');
       case 'AlertDialog': return wrap('<button class="pv-button danger" data-action="dialog">Delete project</button><div class="pv-overlay-card" data-overlay hidden><div><b>Delete project?</b><p>This action cannot be undone.</p><footer><button data-action="close-overlay">Cancel</button><button class="danger" data-action="close-overlay">Delete</button></footer></div></div>');
-      case 'Drawer': return wrap('<button class="pv-button" data-action="dialog">Open drawer</button><div class="pv-drawer" data-overlay hidden><button data-action="close-overlay">×</button><b>Notifications</b><p>You are all caught up.</p></div>');
+      case 'Drawer': return wrap('<button class="pv-button" data-action="dialog">Open drawer</button><div class="pv-overlay-backdrop" data-overlay hidden><aside class="pv-drawer"><button data-action="close-overlay">×</button><b>Notifications</b><p>You are all caught up.</p></aside></div>');
       case 'Modal': return wrap('<button class="pv-button" data-action="dialog">Open modal</button><div class="pv-overlay-card" data-overlay hidden><div><button class="pv-x" data-action="close-overlay">×</button><b>Invite your team</b><p>Collaborate in the same workspace.</p><input placeholder="name@company.com"></div></div>');
-      case 'Sheet': return wrap('<button class="pv-button" data-action="dialog">Open sheet</button><div class="pv-sheet" data-overlay hidden><i></i><b>Quick actions</b><button>Create project</button><button>Invite member</button></div>');
+      case 'Sheet': return wrap('<button class="pv-button" data-action="dialog">Open sheet</button><div class="pv-overlay-backdrop" data-overlay hidden><section class="pv-sheet"><i></i><b>Quick actions</b><button>Create project</button><button>Invite member</button></section></div>');
       case 'Popover': return wrap('<div class="pv-popover"><button class="pv-button" data-action="popover">Share</button><div data-popover hidden><b>Share workspace</b><input value="gozion.dev/acme"><button>Copy link</button></div></div>');
       case 'Tooltip': return wrap('<div class="pv-tooltip"><button aria-describedby="demo-tooltip">?</button><span id="demo-tooltip" role="tooltip">Open help center</span></div>');
       case 'DropdownMenu': return wrap('<div class="pv-menu"><button class="pv-button" data-action="menu">Options '+icon('chevron')+'</button><div data-menu hidden><button>Edit</button><button>Duplicate</button><hr><button class="danger">Delete</button></div></div>');
@@ -165,7 +165,7 @@
       const controls = getParticleControls(particle.slug);
       const values = Object.fromEntries(controls.filter(control => control.type !== 'colors').map(control => [control.prop, props[control.prop] ?? control.value]));
       const colorGroup = controls.find(control => control.type === 'colors');
-      if (colorGroup) values.colors = props.colors ?? colorGroup.value;
+      if (colorGroup) values[particle.slug === 'ballpit' ? 'colors' : colorGroup.prop] = props[particle.slug === 'ballpit' ? 'colors' : colorGroup.prop] ?? colorGroup.value;
       const reactValue = value => typeof value === 'boolean' ? `{${value}}` : typeof value === 'number' ? `{${value}}` : Array.isArray(value) ? `{[${value.map(item => typeof item === 'string' ? `'${item}'` : item).join(', ')}]}` : `"${value}"`;
       const attrs = Object.entries(values).map(([key,value]) => `${key}=${reactValue(value)}`).join(' ');
       if (state.framework === 'Vue') return `<${name} ${Object.entries(values).map(([key,value]) => typeof value === 'string' ? `${key}="${value}"` : `:${key}="${Array.isArray(value) ? JSON.stringify(value) : value}"`).join(' ')} />`;
@@ -240,6 +240,7 @@
   const particleControls = {
     'grid-distortion': [{prop:'grid',label:'Grid resolution',type:'range',min:8,max:36,step:1,value:18},{prop:'strength',label:'Distortion',type:'range',min:.02,max:.6,step:.01,value:.22},{prop:'mouse',label:'Cursor radius',type:'range',min:.03,max:.5,step:.01,value:.16},{prop:'relaxation',label:'Relaxation',type:'range',min:.72,max:.98,step:.01,value:.9}],
     ballpit: [{prop:'count',label:'Sphere count',type:'range',min:20,max:160,step:1,value:72},{prop:'gravity',label:'Gravity',type:'range',min:0,max:1.2,step:.05,value:.35},{prop:'ballColors',label:'Sphere colours',type:'colors',value:['#8b5cf6','#22d3ee','#f472b6']},{prop:'ambientColor',label:'Ambient light',type:'color',value:'#1c2748'},{prop:'lightIntensity',label:'Light intensity',type:'range',min:20,max:420,step:5,value:200},{prop:'canvasBackground',label:'Canvas background',type:'color',value:'#090c14'},{prop:'followCursor',label:'Follow cursor',type:'check',value:true}],
+    aurora: [{prop:'colorStops',label:'Aurora colours',type:'colors',value:['#5227ff','#7cff67','#22d3ee']},{prop:'amplitude',label:'Wave amplitude',type:'range',min:.1,max:2.5,step:.05,value:1},{prop:'blend',label:'Colour blend',type:'range',min:0,max:1,step:.05,value:.5},{prop:'speed',label:'Flow speed',type:'range',min:.1,max:3,step:.05,value:1}],
     orb: [{prop:'hue',label:'Orb hue',type:'range',min:0,max:360,step:1,value:0},{prop:'hoverIntensity',label:'Hover energy',type:'range',min:0,max:1,step:.05,value:.35},{prop:'rotateOnHover',label:'Rotate on hover',type:'check',value:true},{prop:'backgroundColor',label:'Canvas background',type:'color',value:'#090c14'}],
     galaxy: [{prop:'hueShift',label:'Star hue',type:'range',min:0,max:360,step:1,value:140},{prop:'starSpeed',label:'Star speed',type:'range',min:0,max:2,step:.05,value:.5},{prop:'density',label:'Star density',type:'range',min:.3,max:2.5,step:.1,value:1.2},{prop:'mouseInteraction',label:'Pointer parallax',type:'check',value:true}],
     'dot-field': [{prop:'gradientFrom',label:'Gradient start',type:'color',value:'#a855f7'},{prop:'gradientTo',label:'Gradient end',type:'color',value:'#38bdf8'},{prop:'dotSpacing',label:'Dot spacing',type:'range',min:8,max:32,step:1,value:14},{prop:'cursorForce',label:'Cursor force',type:'range',min:0,max:.5,step:.01,value:.1}],
@@ -268,6 +269,10 @@
     // their public API is explicitly mapped here.
     return [];
   }
+  function textControl(item) {
+    if (item.category === 'Particles' || ['Box','Flex','Stack','Grid','Center','Container','Divider','AspectRatio','Icon','Image','VisuallyHidden'].includes(item.name)) return '';
+    return `<label>Children / text<input data-option="children" type="text" value="${state.locale === 'it' ? 'Contenuto' : 'Content'}"></label>`;
+  }
   function previewControls(item) {
     const kind = item.category;
     const particle = particleEffect(item.name);
@@ -290,7 +295,7 @@
     const colorControl = colorless.has(item.name) ? '' : `<label class="color-control">Color<input data-option="color" type="color" value="#5b55e7"></label>`;
     const borderControls = borderless.has(item.name) ? '' : `<label class="color-control">Border color<input data-option="borderColor" type="color" value="#8f96a8"></label><label>Border<select data-option="border"><option value="0px">None</option><option value="1px" selected>Thin</option><option value="2px">Medium</option><option value="3px">Bold</option></select></label>`;
     const disabledControl = staticComponents.has(item.name) ? '' : `<label class="check-control"><input data-option="disabled" type="checkbox">${t('disabled')}</label>`;
-    return `${contextual}${colorControl}${borderControls}${disabledControl}`;
+    return `${textControl(item)}${contextual}${colorControl}${borderControls}${disabledControl}`;
   }
   const contractProps = {
     Table:[['columns','Column[]','required','Header, key, and optional cell renderer definitions.'],['rows','Row[]','required','Data records rendered in the table body.'],['rowActions','(row) => ReactNode','—','Optional per-row action menu or buttons.'],['onRowClick','(row) => void','—','Called when a user activates a row.'],['emptyState','ReactNode','—','Content shown when rows is empty.']],
@@ -411,10 +416,14 @@
         const particleOptions = Object.fromEntries($$('[data-particle-option]').map(input => [input.dataset.particleOption, input.type === 'checkbox' ? input.checked : input.value]));
         const props = {};
         Object.entries(particleOptions).forEach(([key, value]) => {
-          if (key.startsWith('ballColors-') || key === 'canvasBackground') return;
+          if (key.includes('-') || key === 'canvasBackground') return;
           props[key] = typeof value === 'string' && $(`[data-particle-option="${key}"]`).type === 'range' ? Number(value) : value;
         });
-        if (particle.slug === 'ballpit') props.colors = [0, 1, 2].map(index => Number.parseInt(particleOptions[`ballColors-${index}`].slice(1), 16));
+        getParticleControls(particle.slug).filter(control => control.type === 'colors').forEach(control => {
+          const colors = control.value.map((_, index) => particleOptions[`${control.prop}-${index}`]);
+          props[control.prop] = particle.slug === 'ballpit' ? colors.map(color => Number.parseInt(color.slice(1), 16)) : colors;
+        });
+        if (particle.slug === 'ballpit') { props.colors = props.ballColors; delete props.ballColors; }
         const host = $('[data-background-effect]', stage);
         if (particle.slug === 'ballpit') {
           props.ambientColor = Number.parseInt(particleOptions.ambientColor.slice(1), 16);
@@ -424,6 +433,11 @@
         if (state.framework !== 'Preview') $('#framework-content').innerHTML = codeBlock(codeExample(item.name, props));
         $$('output', document.querySelector('.preview-controls')).forEach(output => { const input = output.parentElement.querySelector('input[type=range]'); if (input) output.textContent = input.value; });
         return;
+      }
+      if (options.children) {
+        const targets = $$('[data-preview-text]', stage);
+        const fallback = stage.querySelector('.pv-button,.pv-card h3,.pv-heading h3,.pv-alert b,.pv-toast b,.pv-empty h3,.pv-sheet b,.pv-drawer b,.pv-effect b,.pv-toggle,.pv-tabs p,.pv-collapsible button,strong');
+        (targets.length ? targets : fallback ? [fallback] : []).forEach(target => { target.textContent = options.children; });
       }
       stage.dataset.size = options.size || 'md'; stage.dataset.status = options.status || options.tone || 'default'; stage.dataset.density = options.density || 'comfortable'; stage.dataset.align = options.align || 'center'; stage.dataset.placement = options.placement || 'center'; stage.dataset.animated = options.animated === false ? 'false' : 'true'; stage.dataset.disabled = String(Boolean(options.disabled)); stage.style.setProperty('--preview-intensity', `${options.intensity || 70}%`); stage.style.setProperty('--ui-primary', options.color || '#5b55e7'); stage.style.setProperty('--ui-focus-ring', options.color || '#5b55e7'); stage.style.setProperty('--ui-border-color', options.borderColor || '#8f96a8'); stage.style.setProperty('--preview-border-width', options.border || '1px'); stage.setAttribute('aria-disabled', String(Boolean(options.disabled)));
       $$('button,input,select,textarea', stage).forEach(element => { element.disabled = Boolean(options.disabled); });
@@ -501,6 +515,8 @@
     if (action === 'collapse') $('[data-collapse]',preview).hidden = !$('[data-collapse]',preview).hidden;
   }
   document.addEventListener('click', event => {
+    const backdrop = event.target.closest?.('[data-overlay]');
+    if (backdrop && event.target === backdrop) { backdrop.hidden = true; return; }
     const componentLink = event.target.closest('[data-component-link]'); if (componentLink && !event.target.closest('button,input,select,a')) { location.hash = '#/'+componentLink.dataset.componentLink; return; }
     const framework = event.target.closest('[data-framework]'); if (framework) { state.framework = framework.dataset.framework; const item = findComponent(location.hash.slice(14)); if (item) renderComponent(item); return; }
     const copyCode = event.target.closest('[data-copy-code]'); if (copyCode) { navigator.clipboard.writeText(copyCode.parentElement.querySelector('code').innerText); copyCode.textContent = t('copied'); setTimeout(() => copyCode.textContent = t('copy'),1200); return; }
@@ -517,6 +533,6 @@
   $('#locale-select').addEventListener('change', event => { state.locale = event.target.value; localStorage.setItem('gozion-locale',state.locale); applyLocale(); });
   $('#theme-select').addEventListener('change', event => { applyTheme(event.target.value); route(false); });
   $('#menu-toggle').addEventListener('click',() => $('#sidebar').classList.toggle('open'));
-  document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape' && dialog.open) dialog.close(); });
+  document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape') { if (dialog.open) dialog.close(); $$('[data-overlay]').forEach(overlay => overlay.hidden = true); } });
   addEventListener('hashchange', () => route()); applyTheme(state.theme); applyLocale();
 })();
