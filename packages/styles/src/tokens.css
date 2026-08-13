@@ -9,7 +9,7 @@
   --ui-transition-duration: 160ms; --ui-duration-slow: 300ms; --ui-easing: cubic-bezier(.2,.8,.2,1);
   --ui-focus-ring: #6366f1; --ui-focus-offset: 2px;
 }
-[data-ui-theme="light"] { --ui-primary:#5b55e7; --ui-secondary:#087f8c; --ui-danger:#c9364f; --ui-foreground:#161927; --ui-background:#f7f8fb; --ui-surface:#fff; --ui-surface-muted:#f0f2f7; --ui-border-color:#dde1ea; --ui-focus-ring:#5b55e7; --ui-shadow:0 14px 38px rgb(27 31 45 / .09); color-scheme:light; }
+[data-ui-theme="light"] { --ui-primary:#6e5c84; --ui-secondary:#5c8580; --ui-danger:#b95555; --ui-foreground:#29251f; --ui-background:#f6f1e8; --ui-surface:#fffaf3; --ui-surface-muted:#eee6db; --ui-border-color:#ded4c7; --ui-focus-ring:#6e5c84; --ui-shadow:0 16px 42px rgb(73 57 42 / .11); color-scheme:light; }
 [data-ui-theme="dark"] { --ui-primary:#928cff; --ui-secondary:#47c5c8; --ui-danger:#ff8295; --ui-foreground:#f4f5f8; --ui-background:#0d0f14; --ui-surface:#151820; --ui-surface-muted:#1d212b; --ui-border-color:#2d3340; --ui-focus-ring:#aaa5ff; --ui-shadow:0 20px 50px rgb(0 0 0 / .42); color-scheme:dark; }
 [data-ui-theme="system"] { --ui-primary:#767d5c; --ui-secondary:#a56f5b; --ui-danger:#b95555; --ui-foreground:#352f29; --ui-background:#f5efe5; --ui-surface:#fffaf2; --ui-surface-muted:#eee5d8; --ui-border-color:#ddd1c1; --ui-focus-ring:#767d5c; --ui-shadow:0 16px 42px rgb(87 69 46 / .11); color-scheme:light; }
 [data-ui-theme="glass"] { --ui-primary:#c4b5fd; --ui-secondary:#67e8f9; --ui-foreground:#f8fafc; --ui-background:#111827; --ui-surface:rgb(255 255 255 / .12); --ui-surface-muted:rgb(255 255 255 / .08); --ui-border-color:rgb(255 255 255 / .24); --ui-backdrop-blur:16px; color-scheme:dark; }

@@ -32,7 +32,7 @@
     .toLowerCase();
   const title = value => value.replace(/([A-Z])/g, ' $1').trim();
   const esc = value => value.replace(/[&<>]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[char]));
-  const state = { locale: localStorage.getItem('gozion-locale') || 'it', framework: 'React', component: {}, theme: localStorage.getItem('gozion-theme') || 'light' };
+  const state = { locale: localStorage.getItem('gozion-locale') || 'it', framework: 'React', component: {}, theme: 'light' };
   const backgroundPreviewCleanups = new Set();
   const t = key => copy[state.locale][key] || key;
   const categoryNames = {it:{Layout:'Layout',Typography:'Tipografia',Forms:'Form',Selection:'Selezione',Navigation:'Navigazione',Overlay:'Overlay',Feedback:'Feedback','Data Display':'Visualizzazione dati',Media:'Media',Interaction:'Interazione',Effects:'Effetti',Utilities:'Utility',Particles:'Particellari'},en:{}};
@@ -57,13 +57,9 @@
     const wrap = content => `<div class="pv pv-preview-${slug(name)}${c}" data-preview="${name}">${content}</div>`;
     const particle = particleEffect(name);
     if (particle) {
-      const needsRuntimeFallback = ['grid-distortion','ballpit'].includes(particle.slug);
-      const fallback = needsRuntimeFallback ? `<div class="particle-fallback particle-fallback-${particle.slug}" aria-hidden="true"><i></i><i></i><i></i><i></i></div>` : '';
-      // The catalogue is deliberately poster-based. Rendering many WebGL and
-      // Three scenes in a grid exhausts browser GPU contexts and makes every
-      // card collapse after a second. The full interactive runtime is mounted
-      // only on the individual effect page.
-      return wrap(`${compact ? `<div class="particle-card-poster particle-card-${particle.slug}" aria-hidden="true"></div>` : `${fallback}<div class="pv-background-effect" data-background-effect="${particle.slug}" aria-label="${particle.name}: ${particle.description}"></div>`}`);
+      // Every surface uses the actual exported React particle component. Gallery
+      // cards are mounted only while near the viewport to avoid GPU exhaustion.
+      return wrap(`<div class="pv-background-effect" data-background-effect="${particle.slug}" data-particle-preview="${compact ? 'card' : 'detail'}" aria-label="${particle.name}: ${particle.description}"></div>`);
     }
     switch (name) {
       case 'Box': return wrap('<div class="pv-box"><span>Box</span></div>');
@@ -242,7 +238,7 @@
   // not the generic component chrome controls used by the rest of the docs.
   const particleControls = {
     'grid-distortion': [{prop:'grid',label:'Grid resolution',type:'range',min:8,max:36,step:1,value:18},{prop:'strength',label:'Distortion',type:'range',min:.02,max:.6,step:.01,value:.22},{prop:'mouse',label:'Cursor radius',type:'range',min:.03,max:.5,step:.01,value:.16},{prop:'relaxation',label:'Relaxation',type:'range',min:.72,max:.98,step:.01,value:.9}],
-    ballpit: [{prop:'count',label:'Sphere count',type:'range',min:20,max:160,step:1,value:72},{prop:'gravity',label:'Gravity',type:'range',min:0,max:1.2,step:.05,value:.35},{prop:'ballColors',label:'Sphere colours',type:'colors',value:['#8b5cf6','#22d3ee','#f472b6']},{prop:'followCursor',label:'Follow cursor',type:'check',value:true}],
+    ballpit: [{prop:'count',label:'Sphere count',type:'range',min:20,max:160,step:1,value:72},{prop:'gravity',label:'Gravity',type:'range',min:0,max:1.2,step:.05,value:.35},{prop:'ballColors',label:'Sphere colours',type:'colors',value:['#8b5cf6','#22d3ee','#f472b6']},{prop:'ambientColor',label:'Ambient light',type:'color',value:'#1c2748'},{prop:'lightIntensity',label:'Light intensity',type:'range',min:20,max:420,step:5,value:200},{prop:'canvasBackground',label:'Canvas background',type:'color',value:'#090c14'},{prop:'followCursor',label:'Follow cursor',type:'check',value:true}],
     orb: [{prop:'hue',label:'Orb hue',type:'range',min:0,max:360,step:1,value:0},{prop:'hoverIntensity',label:'Hover energy',type:'range',min:0,max:1,step:.05,value:.35},{prop:'rotateOnHover',label:'Rotate on hover',type:'check',value:true},{prop:'backgroundColor',label:'Canvas background',type:'color',value:'#090c14'}],
     galaxy: [{prop:'hueShift',label:'Star hue',type:'range',min:0,max:360,step:1,value:140},{prop:'starSpeed',label:'Star speed',type:'range',min:0,max:2,step:.05,value:.5},{prop:'density',label:'Star density',type:'range',min:.3,max:2.5,step:.1,value:1.2},{prop:'mouseInteraction',label:'Pointer parallax',type:'check',value:true}],
     'dot-field': [{prop:'gradientFrom',label:'Gradient start',type:'color',value:'#a855f7'},{prop:'gradientTo',label:'Gradient end',type:'color',value:'#38bdf8'},{prop:'dotSpacing',label:'Dot spacing',type:'range',min:8,max:32,step:1,value:14},{prop:'cursorForce',label:'Cursor force',type:'range',min:0,max:.5,step:.01,value:.1}],
@@ -259,8 +255,6 @@
     silk: [{prop:'color',label:'Silk color',type:'color',value:'#8b5cf6'},{prop:'speed',label:'Flow speed',type:'range',min:.1,max:10,step:.1,value:5},{prop:'noiseIntensity',label:'Texture',type:'range',min:0,max:4,step:.1,value:1.5},{prop:'rotation',label:'Rotation',type:'range',min:0,max:360,step:1,value:0}],
     beams: [{prop:'lightColor',label:'Beam color',type:'color',value:'#c4b5fd'},{prop:'speed',label:'Beam speed',type:'range',min:.1,max:5,step:.1,value:2},{prop:'beamNumber',label:'Beam count',type:'range',min:2,max:24,step:1,value:12},{prop:'noiseIntensity',label:'Noise',type:'range',min:0,max:4,step:.1,value:1.75}]
   };
-  const pairedColorParticleEffects = new Set(['acid-squares','web-threads','scanner','sliced-waves','side-rays','soft-aurora','plasma-wave','gradient-waves','balatro']);
-  const speedParticleEffects = new Set(['acid-squares','gradient-waves','web-threads','topography','scanner','ferrofluid','lightfall','prism','light-pillar','floating-lines','side-rays','light-rays','pixel-blast','color-bends','evil-eye','line-waves','aurora','plasma-wave','gradient-blinds','grainient','prismatic-burst','iridescence','liquid-chrome','balatro','particles','ripple-grid','threads']);
   function particleControlMarkup(control) {
     if (control.type === 'check') return `<label class="check-control"><input data-particle-option="${control.prop}" type="checkbox" ${control.value ? 'checked' : ''}>${control.label}</label>`;
     if (control.type === 'colors') return `<div class="particle-colors"><span>${control.label}</span>${control.value.map((color,index) => `<input aria-label="${control.label} ${index + 1}" data-particle-option="${control.prop}-${index}" type="color" value="${color}">`).join('')}</div>`;
@@ -269,12 +263,9 @@
   }
   function getParticleControls(slug) {
     if (particleControls[slug]) return particleControls[slug];
-    const controls = [];
-    if (pairedColorParticleEffects.has(slug)) controls.push({prop:'color1',label:'Primary color',type:'color',value:'#8b5cf6'},{prop:'color2',label:'Secondary color',type:'color',value:'#22d3ee'});
-    if (speedParticleEffects.has(slug)) controls.push({prop:'speed',label:'Animation speed',type:'range',min:.1,max:3,step:.05,value:1});
-    // Effects without public runtime configuration deliberately expose no
-    // fake border/colour controls.
-    return controls;
+    // Never invent controls: undocumented effects remain usable as-is until
+    // their public API is explicitly mapped here.
+    return [];
   }
   function previewControls(item) {
     const kind = item.category;
@@ -356,14 +347,34 @@
     });
   }
   function initBackgroundPreviews(scope = document) {
-    $$('[data-background-effect]', scope).forEach(host => {
-      if (host.dataset.ready) return; host.dataset.ready = 'true';
+    const hosts = $$('[data-background-effect]', scope);
+    const deferredHosts = [];
+    const mountHost = host => {
+      if (host.dataset.ready) { host._mountParticle?.(); return; }
+      host.dataset.ready = 'true';
       let unmount = () => {};
-      const mount = (props = {}) => { if (globalThis.GozionParticleRuntime) { unmount(); unmount = globalThis.GozionParticleRuntime.mount(host, host.dataset.backgroundEffect, props); } };
+      const mount = (props = {}) => {
+        if (globalThis.GozionParticleRuntime) {
+          unmount();
+          unmount = globalThis.GozionParticleRuntime.mount(host, host.dataset.backgroundEffect, props);
+        }
+      };
       host._mountParticle = mount;
+      host._unmountParticle = () => { unmount(); };
       if (globalThis.GozionParticleRuntime) mount(); else window.addEventListener('gozion-particle-runtime-ready', mount, {once:true});
       backgroundPreviewCleanups.add(() => { window.removeEventListener('gozion-particle-runtime-ready', mount); unmount(); });
-    });
+    };
+    hosts.forEach(host => host.dataset.particlePreview === 'card' ? deferredHosts.push(host) : mountHost(host));
+    if (!deferredHosts.length) return;
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        const host = entry.target;
+        if (entry.isIntersecting) mountHost(host);
+        else host._unmountParticle?.();
+      });
+    }, { rootMargin: '220px 0px' });
+    deferredHosts.forEach(host => observer.observe(host));
+    backgroundPreviewCleanups.add(() => observer.disconnect());
   }
   function clearBackgroundPreviews() { backgroundPreviewCleanups.forEach(cleanup => cleanup()); backgroundPreviewCleanups.clear(); }
   function renderCatalogue() {
@@ -399,11 +410,15 @@
         const particleOptions = Object.fromEntries($$('[data-particle-option]').map(input => [input.dataset.particleOption, input.type === 'checkbox' ? input.checked : input.value]));
         const props = {};
         Object.entries(particleOptions).forEach(([key, value]) => {
-          if (key.startsWith('ballColors-')) return;
+          if (key.startsWith('ballColors-') || key === 'canvasBackground') return;
           props[key] = typeof value === 'string' && $(`[data-particle-option="${key}"]`).type === 'range' ? Number(value) : value;
         });
         if (particle.slug === 'ballpit') props.colors = [0, 1, 2].map(index => Number.parseInt(particleOptions[`ballColors-${index}`].slice(1), 16));
         const host = $('[data-background-effect]', stage);
+        if (particle.slug === 'ballpit') {
+          props.ambientColor = Number.parseInt(particleOptions.ambientColor.slice(1), 16);
+          host.style.background = particleOptions.canvasBackground;
+        }
         host?._mountParticle?.(props);
         if (state.framework !== 'Preview') $('#framework-content').innerHTML = codeBlock(codeExample(item.name, props));
         $$('output', document.querySelector('.preview-controls')).forEach(output => { const input = output.parentElement.querySelector('input[type=range]'); if (input) output.textContent = input.value; });
@@ -440,14 +455,14 @@
       '<div class="install-examples"><article><h3>React</h3>' + codeBlock(reactExample) + '</article><article><h3>Vue</h3>' + codeBlock(vueExample) + '</article><article><h3>Angular</h3>' + codeBlock(angularExample) + '</article></div>',
       '<h2 class="section-title">4. ' + (isIt ? 'Applica un tema' : 'Apply a theme') + '</h2>',
       '<p class="section-intro">' + (isIt ? 'In React usa ThemeProvider; in qualsiasi framework puoi applicare data-ui-theme al contenitore dell’app.' : 'In React use ThemeProvider; in any framework you can apply data-ui-theme to the app container.') + '</p>',
-      codeBlock('<main data-ui-theme="dark">\n  <!-- your Gozion UI -->\n</main>'),
+      codeBlock('<main data-ui-theme="light">\n  <!-- your Gozion UI -->\n</main>'),
       '<div class="a11y-note"><strong>' + (isIt ? 'Da ricordare.' : 'Keep in mind.') + '</strong> ' + (isIt ? 'Gli stili abilitano layout, temi, focus visibile e stati disabled: importali una sola volta a livello app.' : 'Styles enable layout, themes, visible focus, and disabled states: import them once at app level.') + '</div>'
     ].join('');
     return;
     main.innerHTML = `<p class="eyebrow">${t('start')}</p><h1 class="page-title">${t('install')} Gozion UI</h1><p class="page-intro">${state.locale === 'it' ? 'Inizializza token e stili, poi aggiungi soltanto i componenti necessari.' : 'Initialize tokens and styles, then add only the components you need.'}</p>${codeBlock('npx gozion-ui@latest init')}<h2 class="section-title">${t('components')}</h2>${codeBlock('npx gozion-ui@latest add button card input')}`;
   }
   function renderStudio() {
-    const palettes = {light:['#5b55e7','#087f8c','#f7f8fb','#ffffff','#161927','#dde1ea'],dark:['#928cff','#47c5c8','#0d0f14','#151820','#f4f5f8','#2d3340'],system:['#767d5c','#a56f5b','#f5efe5','#fffaf2','#352f29','#ddd1c1']};
+    const palettes = {light:['#6e5c84','#5c8580','#f6f1e8','#fffaf3','#29251f','#ded4c7']};
     const active = palettes[root.dataset.uiTheme] || palettes.light;
     const controls = ['primary','secondary','background','surface','foreground','border-color'].map((name,index) => [name,active[index]]);
     main.innerHTML = `<p class="eyebrow">${t('studio')}</p><h1 class="page-title">${state.locale === 'it' ? 'Modifica il sistema visivamente.' : 'Tune the system visually.'}</h1><p class="page-intro">${state.locale === 'it' ? 'Controlli visuali, anteprima completa ed esportazione immediata dei token.' : 'Visual controls, complete preview, and instant token export.'}</p><div class="studio"><aside class="studio-controls">${controls.map(([name,value]) => `<div class="studio-control"><label>${title(name)}</label><input type="color" data-token="${name}" value="${value}"></div>`).join('')}<div class="studio-control"><label>Radius <output>10px</output></label><input type="range" data-token="radius" min="0" max="24" value="10"></div><div class="studio-control"><label>Shadow <output>18px</output></label><input type="range" data-token="shadow" min="0" max="40" value="18"></div><div class="studio-control"><label>Motion <output>160ms</output></label><input type="range" data-token="motion" min="0" max="500" step="20" value="160"></div></aside><section class="studio-preview"><div class="studio-collection">${componentPreview('Navbar')}${componentPreview('Card')}${componentPreview('Input')}${componentPreview('Switch')}<div class="studio-row">${componentPreview('Button')}${componentPreview('Badge')}</div></div><h2 class="section-title">CSS</h2><pre class="code-block css-export" id="css-output"></pre></section></div>`;
@@ -458,7 +473,7 @@
     root.lang = state.locale; $('#locale-select').value = state.locale; $('[data-i18n="search"]').textContent = t('search'); $('#search-input').placeholder = `${t('search')}…`; renderSidebar(); route(false);
   }
   function applyTheme(mode) {
-    state.theme = mode; localStorage.setItem('gozion-theme', mode); ['--ui-primary','--ui-secondary','--ui-background','--ui-surface','--ui-foreground','--ui-border-color','--ui-radius','--ui-shadow','--ui-transition-duration'].forEach(token => root.style.removeProperty(token)); root.dataset.uiTheme = mode; $('#theme-select').value = mode;
+    state.theme = 'light'; localStorage.setItem('gozion-theme', 'light'); ['--ui-primary','--ui-secondary','--ui-background','--ui-surface','--ui-foreground','--ui-border-color','--ui-radius','--ui-shadow','--ui-transition-duration'].forEach(token => root.style.removeProperty(token)); root.dataset.uiTheme = 'light';
   }
   function route(scroll = true) {
     const path = location.hash.slice(2) || 'getting-started';
@@ -499,7 +514,6 @@
   function search(value = '') { const found = items.filter(item => (item.name+item.category+description(item)).toLowerCase().includes(value.toLowerCase())).slice(0,14); results.innerHTML = found.length ? found.map(item => `<a class="search-item" href="#/components/${slug(item.name)}"><strong>${title(item.name)}</strong><small>${item.category} · ${description(item)}</small></a>`).join('') : `<p class="empty-search">${state.locale === 'it' ? 'Nessun componente trovato.' : 'No components found.'}</p>`; }
   $('#search-trigger').addEventListener('click',() => { dialog.showModal(); searchInput.value=''; search(); searchInput.focus(); }); searchInput.addEventListener('input', event => search(event.target.value)); dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   $('#locale-select').addEventListener('change', event => { state.locale = event.target.value; localStorage.setItem('gozion-locale',state.locale); applyLocale(); });
-  $('#theme-select').addEventListener('change', event => { applyTheme(event.target.value); route(false); });
   $('#menu-toggle').addEventListener('click',() => $('#sidebar').classList.toggle('open'));
   document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape' && dialog.open) dialog.close(); });
   addEventListener('hashchange', () => route()); applyTheme(state.theme); applyLocale();
