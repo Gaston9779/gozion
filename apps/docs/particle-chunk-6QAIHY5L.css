@@ -1,0 +1,7 @@
+/* ../../packages/react/src/particles/react-bits/PrismaticBurst/PrismaticBurst.css */
+.prismatic-burst-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

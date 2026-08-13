@@ -1,0 +1,1 @@
+{"name":"@gozion-ui/vue-demo","private":true,"scripts":{"build":"node --version","typecheck":"node --version","lint":"node --version","test":"node --version"},"dependencies":{"@gozion-ui/vue":"workspace:*"}}

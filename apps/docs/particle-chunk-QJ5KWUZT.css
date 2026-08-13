@@ -1,0 +1,7 @@
+/* ../../packages/react/src/particles/react-bits/AcidSquares/AcidSquares.css */
+.acid-squares-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}

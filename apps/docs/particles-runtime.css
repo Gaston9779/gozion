@@ -1,0 +1,552 @@
+/* ../../packages/react/dist/particles/react-bits/MoltenMetal/MoltenMetal.css */
+.molten-metal-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/GradientWaves/GradientWaves.css */
+.gradient-waves-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/WebThreads/WebThreads.css */
+.web-threads-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Topography/Topography.css */
+.topography-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LightTunnel/LightTunnel.css */
+.light-tunnel-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/SlicedWaves/SlicedWaves.css */
+.sliced-waves-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/AcidSquares/AcidSquares.css */
+.acid-squares-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Scanner/Scanner.css */
+.scanner-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Ferrofluid/Ferrofluid.css */
+.ferrofluid-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Lightfall/Lightfall.css */
+.lightfall-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LiquidEther/LiquidEther.css */
+.liquid-ether-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Prism/Prism.css */
+.prism-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/DarkVeil/DarkVeil.css */
+.darkveil-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LightPillar/LightPillar.css */
+.light-pillar-fallback {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #888;
+  font-size: 14px;
+}
+.light-pillar-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* ../../packages/react/dist/particles/react-bits/FloatingLines/FloatingLines.css */
+.floating-lines-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/SideRays/SideRays.css */
+.side-rays-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LightRays/LightRays.css */
+.light-rays-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/PixelBlast/PixelBlast.css */
+.pixel-blast-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/ColorBends/ColorBends.css */
+.color-bends-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/EvilEye/EvilEye.css */
+.evil-eye-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LineWaves/LineWaves.css */
+.line-waves-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Radar/Radar.css */
+.radar-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/SoftAurora/SoftAurora.css */
+.soft-aurora-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Aurora/Aurora.css */
+.aurora-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Plasma/Plasma.css */
+.plasma-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/PlasmaWave/PlasmaWave.css */
+.plasma-wave-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Particles/Particles.css */
+.particles-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/GradientBlinds/GradientBlinds.css */
+.gradient-blinds-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Grainient/Grainient.css */
+.grainient-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/GridScan/GridScan.css */
+.gridscan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.gridscan__preview {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 220px;
+  height: 132px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background: #000;
+  color: #fff;
+  font:
+    12px/1.2 system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
+  pointer-events: none;
+}
+.gridscan__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+.gridscan__badge {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  padding: 2px 6px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
+/* ../../packages/react/dist/particles/react-bits/Beams/Beams.css */
+.beams-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/PixelSnow/PixelSnow.css */
+.pixel-snow-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  contain: layout style paint;
+}
+.pixel-snow-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Lightning/Lightning.css */
+.lightning-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ../../packages/react/dist/particles/react-bits/PrismaticBurst/PrismaticBurst.css */
+.prismatic-burst-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Galaxy/Galaxy.css */
+.galaxy-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Dither/Dither.css */
+.dither-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* ../../packages/react/dist/particles/react-bits/FaultyTerminal/FaultyTerminal.css */
+.faulty-terminal-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/RippleGrid/RippleGrid.css */
+.ripple-grid-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/DotField/DotField.css */
+.dot-field-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/DotGrid/DotGrid.css */
+.dot-grid {
+  padding: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+.dot-grid__wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.dot-grid__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Threads/Threads.css */
+.threads-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Hyperspeed/Hyperspeed.css */
+#lights {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: absolute;
+}
+canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Iridescence/Iridescence.css */
+.iridescence-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Waves/Waves.css */
+.waves {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.waves::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #160000;
+  border-radius: 50%;
+  transform: translate3d(calc(var(-0.5rem) - 50%), calc(var(50%) - 50%), 0);
+  will-change: transform;
+}
+.waves-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/GridDistortion/GridDistortion.css */
+.distortion-container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Orb/Orb.css */
+.orb-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/GridMotion/GridMotion.css */
+.noscroll {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.intro {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.intro::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 250px;
+  pointer-events: none;
+  z-index: 4;
+}
+.gridMotion-container {
+  gap: 1rem;
+  flex: none;
+  position: relative;
+  width: 150vw;
+  height: 150vh;
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: 100%;
+  transform: rotate(-15deg);
+  transform-origin: center center;
+  z-index: 2;
+}
+.row {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(7, 1fr);
+  will-change: transform, filter;
+}
+.row__item {
+  position: relative;
+}
+.row__item-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+}
+.row__item-img {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: 50% 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.row__item-content {
+  padding: 1rem;
+  text-align: center;
+  z-index: 1;
+}
+.fullview {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+.fullview .row__item-inner {
+  border-radius: 0px;
+}
+
+/* ../../packages/react/dist/particles/react-bits/ShapeGrid/ShapeGrid.css */
+.shapegrid-canvas {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* ../../packages/react/dist/particles/react-bits/LiquidChrome/LiquidChrome.css */
+.liquidChrome-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* ../../packages/react/dist/particles/react-bits/Balatro/Balatro.css */
+.balatro-container {
+  width: 100%;
+  height: 100%;
+}

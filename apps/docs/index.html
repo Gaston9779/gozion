@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="it" data-ui-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Gozion UI — Component system</title>
+    <link rel="icon" type="image/png" href="./src/assets/gozion-favicon.png">
+  <link rel="stylesheet" href="../../packages/styles/src/index.css">
+  <link rel="stylesheet" href="./docs.css">
+  <link rel="stylesheet" href="./previews.css">
+  <link rel="stylesheet" href="./preview-fixes.css">
+  <link rel="stylesheet" href="./particles-runtime.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="docs-header">
+    <a class="brand" href="#/getting-started" aria-label="Gozion UI"><img class="brand-logo" src="./src/assets/gozion-mark.png" alt="Gozion UI"></a>
+    <button class="search-trigger" id="search-trigger" aria-haspopup="dialog" aria-controls="search-dialog"><span>⌘ K</span><b data-i18n="search">Cerca componenti</b></button>
+    <label class="header-select"><span class="ui-sr-only">Language</span><select id="locale-select" aria-label="Language"><option value="it">IT</option><option value="en">EN</option></select></label>
+    <label class="header-select theme-select"><span class="ui-sr-only">Color theme</span><select id="theme-select" aria-label="Color theme"><option value="light">☀ Light</option><option value="dark">☾ Dark</option><option value="system">✦ System Soft</option></select></label>
+    <button class="menu-control icon-control" id="menu-toggle" aria-label="Open documentation menu">☰</button>
+  </header>
+  <div class="docs-shell">
+    <aside class="docs-sidebar" id="sidebar"><div id="sidebar-content"></div></aside>
+    <main class="docs-main" id="main" tabindex="-1"></main>
+  </div>
+  <dialog class="search-dialog" id="search-dialog" aria-label="Search components">
+    <div class="search-box"><span>⌕</span><input id="search-input" autofocus placeholder="Search 80 components…"><kbd>Esc</kbd></div>
+    <div class="search-results" id="search-results"></div>
+  </dialog>
+  <template id="copy-template"><button class="copy-code" aria-label="Copy code">Copy</button></template>
+  <script src="./particle-effects.js"></script>
+  <script type="module" src="./particles-runtime.js"></script>
+  <script src="./docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+{"name":"@gozion-ui/styles","version":"0.1.0","type":"module","exports":{".":"./src/index.css","./reset.css":"./src/reset.css","./tokens.css":"./src/tokens.css"},"files":["src"],"scripts":{"build":"node --version","typecheck":"node --version","lint":"node --version","test":"node --version"}}

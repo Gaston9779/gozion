@@ -1,0 +1,14 @@
+{
+  "name": "gozion-ui",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "validate": "pnpm build && pnpm typecheck && pnpm lint && pnpm test"
+  },
+  "devDependencies": { "@types/react": "^19.0.8", "@types/react-dom": "^19.0.3", "typescript": "^5.7.3", "vitest": "^3.0.5" }
+}
