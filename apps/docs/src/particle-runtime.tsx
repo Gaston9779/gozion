@@ -26,13 +26,8 @@ function mount(node: HTMLElement, slug: string, effectProps: Record<string, unkn
   if (!effect) return () => {};
   const record: MountedPreview = { root: createRoot(node), cancelled: false };
   mounted.set(node, record);
-  const heroProps = node.dataset.heroParticle === 'orb'
-    ? { backgroundColor: document.documentElement.dataset.uiTheme === 'dark' ? '#090c14' : '#f6f1e8', hue: 18, hoverIntensity: 0.18 }
-    : node.dataset.heroParticle === 'aurora'
-      ? { colorStops: document.documentElement.dataset.uiTheme === 'dark' ? ['#241b55','#5d3d91','#1a7581'] : ['#e9ddff','#f0c8c2','#bce8df'], amplitude: 0.75, blend: 0.35 }
-      : {};
   effect.componentImport().then(({ default: Component }) => {
-    if (!record.cancelled) record.root.render(React.createElement(Component, { ...(defaults[slug] ?? {}), ...heroProps, ...effectProps }));
+    if (!record.cancelled) record.root.render(React.createElement(Component, { ...(defaults[slug] ?? {}), ...effectProps }));
   }).catch(() => { if (!record.cancelled) record.root.render(<ParticleError name={effect.name} />); });
   return () => { record.cancelled = true; record.root.unmount(); mounted.delete(node); };
 }

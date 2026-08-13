@@ -696,7 +696,10 @@ class Z extends InstancedMesh {
     const pmrem = new PMREMGenerator(renderer);
     const envTexture = pmrem.fromScene(roomEnv).texture;
     const geometry = new SphereGeometry();
-    const material = new Y({ envMap: envTexture, ...config.materialParams });
+    // Use Three's stable physical material path for the instanced preview.
+    // The custom shader path was compiling to a transparent frame on some
+    // browsers, leaving the physics simulation present but invisible.
+    const material = new MeshPhysicalMaterial({ envMap: envTexture, vertexColors: true, ...config.materialParams });
     material.envMapRotation.x = -Math.PI / 2;
     super(geometry, material, config.count);
     this.config = config;
