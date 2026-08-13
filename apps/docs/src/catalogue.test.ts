@@ -79,7 +79,9 @@ describe('documentation catalogue', () => {
     expect(indexSource).toContain('family=Outfit');
     expect(indexSource).not.toContain('class="brand" href="#/getting-started" aria-label="Gozion UI"><img');
     expect(indexSource).toContain('class="brand" href="#/getting-started" aria-label="Gozion home">Gozion</a>');
-    expect(previewStyles).toContain("font-family:'Outfit'");
+    expect(previewStyles).toMatch(/font-family:\s*["']Outfit["']/);
+    expect(previewStyles).toMatch(/letter-spacing:\s*normal/);
+    expect(previewStyles).toMatch(/color:\s*#fff/);
   });
 
   it('ships light, dark, and a distinct warm system palette', () => {
