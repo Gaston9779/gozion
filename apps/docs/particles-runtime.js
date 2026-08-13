@@ -1,8 +1,8 @@
-import "./particle-chunk-T7AYHRQ4.js";
-import "./particle-chunk-A2HA2FMB.js";
+import "./particle-chunk-QTTF444A.js";
+import "./particle-chunk-FCCHX3JC.js";
 import "./particle-chunk-LB6UVMAP.js";
 import "./particle-chunk-QSNMUYZZ.js";
-import "./particle-chunk-G3GJDCIQ.js";
+import "./particle-chunk-RFKRDSZZ.js";
 import "./particle-chunk-XGUCEMF7.js";
 import "./particle-chunk-OSDFKJJR.js";
 import "./particle-chunk-YK7EN6YM.js";
@@ -12,15 +12,15 @@ import "./particle-chunk-4SYJT2UT.js";
 import "./particle-chunk-7LH54PQ4.js";
 import "./particle-chunk-7SZ6WFMZ.js";
 import "./particle-chunk-PCYHRZ5Z.js";
-import "./particle-chunk-CC4JJUAZ.js";
+import "./particle-chunk-UF6GKJP5.js";
 import "./particle-chunk-2IJLPXC2.js";
 import "./particle-chunk-E6RHVKPD.js";
-import "./particle-chunk-HSARN3C4.js";
-import "./particle-chunk-3UKRAJRB.js";
+import "./particle-chunk-GDPQRM6M.js";
+import "./particle-chunk-XQ6L7WVH.js";
 import "./particle-chunk-XG7YBTXO.js";
 import "./particle-chunk-ORNWH74E.js";
 import "./particle-chunk-PSULXYI4.js";
-import "./particle-chunk-J4ZCCJIE.js";
+import "./particle-chunk-6GDUH4BR.js";
 import "./particle-chunk-UXGFMDWO.js";
 import "./particle-chunk-MU4MRO3G.js";
 import "./particle-chunk-PYXPEJ7O.js";
@@ -28,28 +28,28 @@ import "./particle-chunk-FTKIGNPZ.js";
 import "./particle-chunk-5KLYOBIT.js";
 import "./particle-chunk-CTLQCX7R.js";
 import "./particle-chunk-24C7FVMA.js";
-import "./particle-chunk-5YSCT2UZ.js";
-import "./particle-chunk-F7XSL4UF.js";
+import "./particle-chunk-XDWU2GDV.js";
+import "./particle-chunk-GRPBIREO.js";
 import "./particle-chunk-J5RZHU7K.js";
 import "./particle-chunk-RRVU7EHR.js";
-import "./particle-chunk-LLAMVYD5.js";
-import "./particle-chunk-NWIJGTBM.js";
-import "./particle-chunk-BJYA2CTL.js";
+import "./particle-chunk-I25KS4GW.js";
+import "./particle-chunk-GPZCQM4I.js";
+import "./particle-chunk-WHNVYTFU.js";
 import "./particle-chunk-PVPFERMU.js";
 import "./particle-chunk-IUZBLUYS.js";
 import "./particle-chunk-QWYTX3AA.js";
 import "./particle-chunk-KZCPXTJJ.js";
 import "./particle-chunk-4LUUEUDJ.js";
 import "./particle-chunk-LNMURTKF.js";
-import "./particle-chunk-X56B4EYY.js";
+import "./particle-chunk-O5Z4UXDF.js";
 import "./particle-chunk-D5PZ6NFF.js";
 import "./particle-chunk-6KMBJ62I.js";
-import "./particle-chunk-VP7OUM7Q.js";
-import "./particle-chunk-WOJ77A7Y.js";
+import "./particle-chunk-5RC7TU6J.js";
+import "./particle-chunk-YTM7PNC7.js";
 import {
   require_scheduler
-} from "./particle-chunk-4A67CIMF.js";
-import "./particle-chunk-IPFRVYGG.js";
+} from "./particle-chunk-MC4DO3S2.js";
+import "./particle-chunk-3KY6GLJR.js";
 import "./particle-chunk-HH7A7FMC.js";
 import "./particle-chunk-GUHNFJ33.js";
 import "./particle-chunk-VH6NAXUV.js";
@@ -20266,16 +20266,16 @@ var particleEffects = [
   effect("Scanner", "scanner", "Calm oscilloscope interference bands that sweep across the surface.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-MARFNLWH.js")),
   effect("Ferrofluid", "ferrofluid", "Magnetic liquid traced by glowing contour lines and cursor attraction.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-YYUERKD4.js")),
   effect("Lightfall", "lightfall", "Colorful falling streaks entering a glowing tunnel.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-4U4YXDIO.js")),
-  effect("Liquid Ether", "liquid-ether", "Interactive fluid distortion with configurable colors.", "Three.js", ["three"], () => import("./particle-chunk-CV3TWXST.js")),
+  effect("Liquid Ether", "liquid-ether", "Interactive fluid distortion with configurable colors.", "Three.js", ["three"], () => import("./particle-chunk-2S2X4GMH.js")),
   effect("Prism", "prism", "Rotating spectral prism with configurable color and intensity.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-63U2I7PY.js")),
   effect("Dark Veil", "dark-veil", "Subtle dark animated veil with post-processed depth.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-W5EOCHJE.js")),
-  effect("Light Pillar", "light-pillar", "Vertical pillar of light with layered glow.", "Three.js", ["three"], () => import("./particle-chunk-OVSKOZB7.js")),
-  effect("Silk", "silk", "Smooth illuminated wave surface.", "React Three Fiber", ["three", "@react-three/fiber"], () => import("./particle-chunk-GRNQW4MU.js")),
-  effect("Floating Lines", "floating-lines", "Three-dimensional floating lines reacting to pointer movement.", "Three.js", ["three"], () => import("./particle-chunk-GROHE664.js")),
+  effect("Light Pillar", "light-pillar", "Vertical pillar of light with layered glow.", "Three.js", ["three"], () => import("./particle-chunk-4PXCWHA3.js")),
+  effect("Silk", "silk", "Smooth illuminated wave surface.", "React Three Fiber", ["three", "@react-three/fiber"], () => import("./particle-chunk-TXTXPTT5.js")),
+  effect("Floating Lines", "floating-lines", "Three-dimensional floating lines reacting to pointer movement.", "Three.js", ["three"], () => import("./particle-chunk-VHZKGNUY.js")),
   effect("Side Rays", "side-rays", "Animated rays entering from the side.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-NHV2OCRN.js")),
   effect("Light Rays", "light-rays", "Volumetric configurable beams.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-DVTNHMJZ.js")),
-  effect("Pixel Blast", "pixel-blast", "Exploding pixel particles with optional liquid post-processing.", "Three.js", ["three"], () => import("./particle-chunk-LFSJCGUK.js")),
-  effect("Color Bends", "color-bends", "Vibrant bands flowing through smooth color bends.", "Three.js", ["three"], () => import("./particle-chunk-5WOPKUAK.js")),
+  effect("Pixel Blast", "pixel-blast", "Exploding pixel particles with optional liquid post-processing.", "Three.js", ["three"], () => import("./particle-chunk-AKJEGS2K.js")),
+  effect("Color Bends", "color-bends", "Vibrant bands flowing through smooth color bends.", "Three.js", ["three"], () => import("./particle-chunk-3WTZECKE.js")),
   effect("Evil Eye", "evil-eye", "Procedural iris, slit pupil and fiery outer glow.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-SQKE3OQX.js")),
   effect("Line Waves", "line-waves", "Colorful animated line distortion.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-FUA4FAPN.js")),
   effect("Radar", "radar", "Concentric rings, spokes and rotating radar beam.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-HIAAMREF.js")),
@@ -20286,26 +20286,26 @@ var particleEffects = [
   effect("Particles", "particles", "Configurable particle system.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-I6POP7DH.js")),
   effect("Gradient Blinds", "gradient-blinds", "Layered gradient blinds with spotlight and noise.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-Z5BAOU4W.js")),
   effect("Grainient", "grainient", "Grainy gradient swirls with soft wave distortion.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-4QWCEFNU.js")),
-  effect("Grid Scan", "grid-scan", "Interactive three-dimensional scanning grid room.", "Three.js", ["three", "face-api.js"], () => import("./particle-chunk-43YIIJ76.js").then((module) => ({ default: module.GridScan }))),
-  effect("Beams", "beams", "Crossing animated ribbons.", "React Three Fiber", ["three", "@react-three/fiber", "@react-three/drei"], () => import("./particle-chunk-CJMN76XO.js")),
-  effect("Pixel Snow", "pixel-snow", "Falling pixelated snow with configurable density and speed.", "Canvas2D", [], () => import("./particle-chunk-74ILUGB2.js")),
+  effect("Grid Scan", "grid-scan", "Interactive three-dimensional scanning grid room.", "Three.js", ["three", "face-api.js"], () => import("./particle-chunk-4XCLPGGD.js").then((module) => ({ default: module.GridScan }))),
+  effect("Beams", "beams", "Crossing animated ribbons.", "React Three Fiber", ["three", "@react-three/fiber", "@react-three/drei"], () => import("./particle-chunk-ZZ4R74AK.js")),
+  effect("Pixel Snow", "pixel-snow", "Falling pixelated snow with configurable density and speed.", "Canvas2D", [], () => import("./particle-chunk-F34RW2DU.js")),
   effect("Lightning", "lightning", "Procedural branching lightning with glow flicker.", "Canvas2D", [], () => import("./particle-chunk-URTWNBDE.js")),
   effect("Prismatic Burst", "prismatic-burst", "Controllable burst of refracted light rays.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-CSVGDLLX.js")),
   effect("Galaxy", "galaxy", "Parallax starfield with pointer interaction.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-HTSW2L7I.js")),
-  effect("Dither", "dither", "Retro dithered wave shader with Bayer pixel structure and pointer influence.", "React Three Fiber", ["three", "@react-three/fiber", "@react-three/postprocessing", "postprocessing"], () => import("./particle-chunk-YYALRLUB.js")),
+  effect("Dither", "dither", "Retro dithered wave shader with Bayer pixel structure and pointer influence.", "React Three Fiber", ["three", "@react-three/fiber", "@react-three/postprocessing", "postprocessing"], () => import("./particle-chunk-FGQUO4TE.js")),
   effect("Faulty Terminal", "faulty-terminal", "CRT terminal grid with flicker, noise and dither.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-ZQWXK2JT.js")),
   effect("Ripple Grid", "ripple-grid", "Continuously rippling grid.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-SCT4BK6L.js")),
   effect("Dot Field", "dot-field", "Interactive dot field with bulge, glow, sparkle and waves.", "Canvas2D", [], () => import("./particle-chunk-FPGP6PDB.js")),
   effect("Dot Grid", "dot-grid", "Animated dot grid with cursor interactions.", "DOM / CSS", ["gsap"], () => import("./particle-chunk-3DSTM7EZ.js")),
   effect("Threads", "threads", "Fabric-like animated line motion.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-VCITKZTP.js")),
-  effect("Hyperspeed", "hyperspeed", "Click-and-hold hyperspace travel lines.", "Three.js", ["three"], () => import("./particle-chunk-LDUIYEFO.js")),
+  effect("Hyperspeed", "hyperspeed", "Click-and-hold hyperspace travel lines.", "Three.js", ["three"], () => import("./particle-chunk-G3TIC2UN.js")),
   effect("Iridescence", "iridescence", "Shifting iridescent wave shader.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-NKMOCRXU.js")),
   effect("Waves", "waves", "Layered animated line waves.", "Canvas2D", [], () => import("./particle-chunk-WPGN44CG.js")),
-  effect("Grid Distortion", "grid-distortion", "Cursor-reactive warped grid mesh.", "Three.js", ["three"], () => import("./particle-chunk-W27CNCDM.js")),
-  effect("Ballpit", "ballpit", "Physics ball pit of bouncing colourful spheres.", "Physics", ["three", "gsap"], () => import("./particle-chunk-BWC7BZMX.js")),
+  effect("Grid Distortion", "grid-distortion", "Cursor-reactive warped grid mesh.", "Three.js", ["three"], () => import("./particle-chunk-ACHLC75Z.js")),
+  effect("Ballpit", "ballpit", "Physics ball pit of bouncing colourful spheres.", "Physics", ["three", "gsap"], () => import("./particle-chunk-PQ2ILSEF.js")),
   effect("Orb", "orb", "Floating energy orb with hover response.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-2XMJNPKS.js")),
   effect("Letter Glitch", "letter-glitch", "Matrix-style letter animation.", "Canvas2D", [], () => import("./particle-chunk-FC22J5U7.js")),
-  effect("Grid Motion", "grid-motion", "Perspective grid moving with cursor position.", "DOM / CSS", ["gsap"], () => import("./particle-chunk-XBMY5M5P.js")),
+  effect("Grid Motion", "grid-motion", "Perspective grid moving with cursor position.", "DOM / CSS", ["gsap"], () => import("./particle-chunk-CMRAYBOH.js")),
   effect("Shape Grid", "shape-grid", "Animated shape grid with directional variants.", "Canvas2D", [], () => import("./particle-chunk-G4CBD747.js")),
   effect("Liquid Chrome", "liquid-chrome", "Flowing metallic reflective liquid.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-AMDVRA54.js")),
   effect("Balatro", "balatro", "Interactive fully-customizable Balatro shader.", "WebGL / GLSL", ["ogl"], () => import("./particle-chunk-IJREKNXP.js"))
@@ -20320,11 +20320,13 @@ var React = __toESM(require_react(), 1);
 var import_jsx_runtime2 = __toESM(require_jsx_runtime(), 1);
 var mounted = /* @__PURE__ */ new WeakMap();
 var defaults = {
-  // These two effects do not have useful visual defaults upstream: Grid
-  // Distortion requires an image and Ballpit defaults every sphere to black.
-  // Keep the documentation preview self-contained and visible.
+  // These effects receive stable, self-contained defaults so the preview is
+  // the actual package component—not a separate placeholder illustration.
   "grid-distortion": { grid: 18, mouse: 0.16, strength: 0.22, relaxation: 0.9 },
-  ballpit: { count: 72, colors: [9133302, 2282478, 16020150, 16498468], gravity: 0.35, followCursor: true, minSize: 0.35, maxSize: 0.8 },
+  "grid-motion": { items: ["Gozion", "React", "Vue", "Angular", "Tokens", "Themes", "Motion", "A11y"], gradientColor: "#5b55e7", rows: 4, columns: 7, gap: 12, itemBackground: "#11131b" },
+  ballpit: { count: 72, colors: [9133302, 2282478, 16020150, 16498468], ambientColor: 16777215, ambientIntensity: 1.35, lightIntensity: 240, gravity: 0.35, followCursor: true, minSize: 0.35, maxSize: 0.8 },
+  "dot-field": { dotRadius: 1.7, dotSpacing: 14, cursorRadius: 500, cursorForce: 0.1, gradientFrom: "#d8c7ff", gradientTo: "#72e2d8", glowColor: "#0b0d18" },
+  waves: { lineColor: "#e8ddff", backgroundColor: "#0b0d18", waveSpeedX: 0.012, waveAmpX: 32 },
   orb: { hue: 0, hoverIntensity: 0.35, rotateOnHover: true, backgroundColor: "#090c14" },
   dither: { waveColor: [0.34, 0.33, 0.9], waveSpeed: 0.05, waveFrequency: 3, waveAmplitude: 0.3, colorNum: 4, pixelSize: 2, enableMouseInteraction: true },
   aurora: { colorStops: ["#3A29FF", "#FF94B4", "#FF3232"], amplitude: 1, blend: 0.5, speed: 0.7 },
