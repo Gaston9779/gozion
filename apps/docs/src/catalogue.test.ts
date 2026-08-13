@@ -59,6 +59,14 @@ describe('documentation catalogue', () => {
     expect(source).toContain('Ogni controllo nell’anteprima aggiorna il codice copiabile');
   });
 
+  it('keeps the documentation particle-first in navigation, catalogue, and home', () => {
+    expect(source).toContain('side-collection side-collection-primary');
+    expect(source).toContain('const orderedGroups = Object.entries(groups).sort');
+    expect(source).toContain("const featuredParticles = ['Aurora','Orb','DotField','Waves','GridDistortion','Ballpit','GridMotion','LiquidChrome']");
+    expect(source).toContain('particle-grid-featured');
+    expect(source).toContain('home-components');
+  });
+
   it('keeps Ballpit on Three’s supported physical material shader path', () => {
     expect(ballpitSource).toContain('new MeshPhysicalMaterial');
     expect(ballpitSource).not.toContain('RE_Direct_Scattering');
