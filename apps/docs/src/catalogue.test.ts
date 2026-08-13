@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(new URL('../docs.js', import.meta.url), 'utf8');
 const tokenStyles = readFileSync(new URL('../../../packages/styles/src/tokens.css', import.meta.url), 'utf8');
+const ballpitSource = readFileSync(new URL('../../../packages/react/src/particles/react-bits/Ballpit/Ballpit.tsx', import.meta.url), 'utf8');
 const groupsSource = source.match(/const groups = \{([\s\S]*?)\n  \};/)?.[1] ?? '';
 const catalogueNames = [...groupsSource.matchAll(/'([A-Z][A-Za-z]+)'/g)].map(match => match[1]);
 const previewCases = new Set([...source.matchAll(/case '([A-Z][A-Za-z]+)'/g)].map(match => match[1]));
@@ -56,6 +57,12 @@ describe('documentation catalogue', () => {
     expect(source).toContain('from "@gozion-ui/vue"');
     expect(source).toContain('from "@gozion-ui/angular"');
     expect(source).toContain('Ogni controllo nell’anteprima aggiorna il codice copiabile');
+  });
+
+  it('keeps Ballpit on Three’s supported physical material shader path', () => {
+    expect(ballpitSource).toContain('new MeshPhysicalMaterial');
+    expect(ballpitSource).not.toContain('RE_Direct_Scattering');
+    expect(ballpitSource).not.toContain('onBeforeCompile = shader');
   });
 
   it('ships light, dark, and a distinct warm system palette', () => {

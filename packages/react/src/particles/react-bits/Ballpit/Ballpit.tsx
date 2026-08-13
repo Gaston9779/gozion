@@ -16,7 +16,6 @@ import {
   PointLight,
   Raycaster,
   Scene,
-  ShaderChunk,
   SphereGeometry,
   SRGBColorSpace,
   Timer,
@@ -422,60 +421,6 @@ class W {
       vel.toArray(velocityData, base);
     }
   }
-}
-
-class Y extends MeshPhysicalMaterial {
-  uniforms: { [key: string]: { value: any } } = {
-    thicknessDistortion: { value: 0.1 },
-    thicknessAmbient: { value: 0 },
-    thicknessAttenuation: { value: 0.1 },
-    thicknessPower: { value: 2 },
-    thicknessScale: { value: 10 }
-  };
-  defines: { USE_UV: string };
-
-  constructor(params: any) {
-    super(params);
-    this.defines = { USE_UV: '' };
-    this.onBeforeCompile = shader => {
-      Object.assign(shader.uniforms, this.uniforms);
-      shader.fragmentShader =
-        `
-        uniform float thicknessPower;
-        uniform float thicknessScale;
-        uniform float thicknessDistortion;
-        uniform float thicknessAmbient;
-        uniform float thicknessAttenuation;
-        ` + shader.fragmentShader;
-      shader.fragmentShader = shader.fragmentShader.replace(
-        'void main() {',
-        `
-        void RE_Direct_Scattering(const in IncidentLight directLight, const in vec2 uv, const in vec3 geometryPosition, const in vec3 geometryNormal, const in vec3 geometryViewDir, const in vec3 geometryClearcoatNormal, inout ReflectedLight reflectedLight) {
-          vec3 scatteringHalf = normalize(directLight.direction + (geometryNormal * thicknessDistortion));
-          float scatteringDot = pow(saturate(dot(geometryViewDir, -scatteringHalf)), thicknessPower) * thicknessScale;
-          #ifdef USE_COLOR
-            vec3 scatteringIllu = (scatteringDot + thicknessAmbient) * vColor;
-          #else
-            vec3 scatteringIllu = (scatteringDot + thicknessAmbient) * diffuse;
-          #endif
-          reflectedLight.directDiffuse += scatteringIllu * thicknessAttenuation * directLight.color;
-        }
-
-        void main() {
-        `
-      );
-      const lightsChunk = ShaderChunk.lights_fragment_begin.replaceAll(
-        'RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );',
-        `
-          RE_Direct( directLight, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, material, reflectedLight );
-          RE_Direct_Scattering(directLight, vUv, geometryPosition, geometryNormal, geometryViewDir, geometryClearcoatNormal, reflectedLight);
-        `
-      );
-      shader.fragmentShader = shader.fragmentShader.replace('#include <lights_fragment_begin>', lightsChunk);
-      if (this.onBeforeCompile2) this.onBeforeCompile2(shader);
-    };
-  }
-  onBeforeCompile2?: (shader: any) => void;
 }
 
 const XConfig = {
