@@ -269,10 +269,6 @@
     // their public API is explicitly mapped here.
     return [];
   }
-  function textControl(item) {
-    if (item.category === 'Particles' || ['Box','Flex','Stack','Grid','Center','Container','Divider','AspectRatio','Icon','Image','VisuallyHidden'].includes(item.name)) return '';
-    return `<label>Children / text<input data-option="children" type="text" value="${state.locale === 'it' ? 'Contenuto' : 'Content'}"></label>`;
-  }
   function previewControls(item) {
     const kind = item.category;
     const particle = particleEffect(item.name);
@@ -295,7 +291,7 @@
     const colorControl = colorless.has(item.name) ? '' : `<label class="color-control">Color<input data-option="color" type="color" value="#5b55e7"></label>`;
     const borderControls = borderless.has(item.name) ? '' : `<label class="color-control">Border color<input data-option="borderColor" type="color" value="#8f96a8"></label><label>Border<select data-option="border"><option value="0px">None</option><option value="1px" selected>Thin</option><option value="2px">Medium</option><option value="3px">Bold</option></select></label>`;
     const disabledControl = staticComponents.has(item.name) ? '' : `<label class="check-control"><input data-option="disabled" type="checkbox">${t('disabled')}</label>`;
-    return `${textControl(item)}${contextual}${colorControl}${borderControls}${disabledControl}`;
+    return `${contextual}${colorControl}${borderControls}${disabledControl}`;
   }
   const contractProps = {
     Table:[['columns','Column[]','required','Header, key, and optional cell renderer definitions.'],['rows','Row[]','required','Data records rendered in the table body.'],['rowActions','(row) => ReactNode','—','Optional per-row action menu or buttons.'],['onRowClick','(row) => void','—','Called when a user activates a row.'],['emptyState','ReactNode','—','Content shown when rows is empty.']],
@@ -313,7 +309,46 @@
     const typeFor = control => control.type === 'check' ? 'boolean' : control.type === 'color' ? 'string (hex color)' : control.type === 'colors' ? 'number[]' : 'number';
     const particleRows = particle ? getParticleControls(particle.slug).map(control => [control.prop === 'ballColors' ? 'colors' : control.prop,typeFor(control),Array.isArray(control.value) ? `[${control.value.join(', ')}]` : String(control.value),control.label]) : null;
     const rows = particleRows || contractProps[name] || [['children','ReactNode','—','Composed content or slot content.'],['variant','string','default','Semantic visual intent.'],['size','Size','md','Density token where supported.'],['disabled','boolean','false','Non-interactive visual and semantic state.']];
-    return `<table class="props-table"><thead><tr><th>Prop / slot</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${rows.map(([prop,type,defaultValue,desc]) => `<tr><td><code>${prop}</code></td><td>${type}</td><td>${defaultValue}</td><td>${desc}</td></tr>`).join('')}</tbody></table>`;
+    return `<table class="props-table" data-api-table><thead><tr><th>Prop / slot</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${rows.map(([prop,type,defaultValue,desc]) => `<tr><td><code>${prop}</code></td><td>${type}</td><td>${defaultValue}</td><td>${desc}</td></tr>`).join('')}</tbody></table>`;
+  }
+  const escAttr = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  function textSlotLabel(node, index, used) {
+    const element = node.parentElement;
+    const tag = element.tagName.toLowerCase();
+    let label = /^h[1-6]$/.test(tag) ? 'Heading' : tag === 'p' || tag === 'small' ? 'Supporting text' : tag === 'button' ? 'Button label' : tag === 'a' ? 'Link label' : tag === 'b' || tag === 'strong' ? 'Title' : tag === 'label' || tag === 'span' ? 'Label' : `Text ${index + 1}`;
+    const count = (used.get(label) || 0) + 1; used.set(label, count);
+    return count === 1 ? label : `${label} ${count}`;
+  }
+  function hydrateTextControls(item) {
+    if (particleEffect(item.name) || item.name === 'Box') return;
+    const stage = $('#component-preview'), controls = $('.preview-controls');
+    const walker = document.createTreeWalker(stage, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const value = node.nodeValue.trim(), parent = node.parentElement;
+        if (!value || !parent || parent.closest('script,style,svg,code,kbd,option')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const slots = []; let node;
+    while ((node = walker.nextNode())) {
+      const textNode = node;
+      slots.push({ node: textNode, get: () => textNode.nodeValue.trim(), set: value => { textNode.nodeValue = value; } });
+    }
+    $$('input[placeholder],textarea[placeholder],img[alt]').forEach(element => {
+      const attribute = element.hasAttribute('placeholder') ? 'placeholder' : 'alt';
+      slots.push({ node: element, attribute, get: () => element.getAttribute(attribute) || '', set: value => element.setAttribute(attribute, value) });
+    });
+    if (!slots.length) return;
+    const used = new Map();
+    const definitions = slots.map((slot, index) => ({ ...slot, label: slot.attribute === 'placeholder' ? 'Placeholder' : slot.attribute === 'alt' ? 'Alternative text' : textSlotLabel(slot.node, index, used), value: slot.get() }));
+    stage._textSlots = definitions;
+    controls.insertAdjacentHTML('afterbegin', definitions.map((slot, index) => `<label class="text-slot-control"><span>${slot.label}</span><input data-text-slot="${index}" type="text" value="${escAttr(slot.value)}" aria-label="${escAttr(slot.label)}"></label>`).join(''));
+    const api = $('[data-api-table] tbody');
+    if (api) api.insertAdjacentHTML('beforeend', definitions.map((slot, index) => `<tr><td><code>text.${slug(slot.label)}</code></td><td>string</td><td>${esc(slot.value)}</td><td>${esc(slot.label)} editable text slot shown in the preview.</td></tr>`).join(''));
+    $$('[data-text-slot]', controls).forEach(input => input.addEventListener('input', event => {
+      const slot = stage._textSlots[Number(event.currentTarget.dataset.textSlot)];
+      if (slot) slot.set(event.currentTarget.value);
+    }));
   }
   function renderSidebar() {
     const tree = (label, links) => `<section class="side-tree"><h2>${label}</h2><div class="side-tree-links">${links}</div></section>`;
@@ -397,6 +432,7 @@
     const index = items.indexOf(item), previous = items[index - 1], next = items[index + 1];
     main.innerHTML = `<div class="crumbs"><a href="#/getting-started">${t('docs')}</a><span>/</span><a href="#/components">${t('components')}</a><span>/</span><span>${title(item.name)}</span></div><p class="eyebrow">${item.category} · ${t(item.status)}</p><h1 class="page-title">${title(item.name)}</h1><p class="page-intro">${description(item)}</p><h2 class="section-title">${t('live')}</h2><div class="preview-panel"><div class="preview-stage" id="component-preview">${componentPreview(item.name)}</div><div class="preview-controls">${previewControls(item)}</div></div><div class="framework-tabs">${['Preview','React','Vue','Angular'].map(tab => `<button class="${state.framework === tab ? 'active' : ''}" data-framework="${tab}">${tab === 'Preview' ? t('preview') : tab}</button>`).join('')}</div><div id="framework-content">${state.framework === 'Preview' ? `<div class="preview-note">${state.locale === 'it' ? 'Interagisci direttamente con il componente qui sopra.' : 'Interact directly with the component above.'}</div>` : codeBlock(codeExample(item.name,{variant:'primary',size:'md'}))}</div><h2 class="section-title">${t('install')}</h2>${codeBlock(`npx gozion-ui@latest add ${slug(item.name)}`)}<h2 class="section-title">${t('usage')}</h2>${codeBlock(`import { ${item.name} } from '@gozion-ui/${state.framework === 'Angular' ? 'angular' : state.framework === 'Vue' ? 'vue' : 'react'}';\n\n${codeExample(item.name)}`)}<h2 class="section-title">${t('custom')}</h2><p class="section-intro">${state.locale === 'it' ? 'Varianti semantiche per il flusso normale, token locali per il controllo preciso.' : 'Semantic variants for the common path, local tokens for precise control.'}</p>${codeBlock(`.my-${slug(item.name)} {\n  --ui-primary: #5b55e7;\n  --ui-radius: .625rem;\n}`)}<h2 class="section-title">${t('a11y')}</h2><div class="a11y-note"><strong>${state.locale === 'it' ? 'Tastiera e screen reader.' : 'Keyboard and screen reader.'}</strong> ${state.locale === 'it' ? 'Focus visibile, semantica nativa, contrasto verificabile e movimento ridotto sono parte del contratto del componente.' : 'Visible focus, native semantics, verifiable contrast, and reduced motion are part of the component contract.'}</div><h2 class="section-title">${t('api')}</h2><table class="props-table"><thead><tr><th>Prop</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody><tr><td><code>variant</code></td><td>string</td><td>primary</td><td>${t('variant')}</td></tr><tr><td><code>size</code></td><td>sm | md | lg</td><td>md</td><td>${t('size')}</td></tr><tr><td><code>disabled</code></td><td>boolean</td><td>false</td><td>${t('disabled')}</td></tr></tbody></table><nav class="page-nav">${previous ? `<a href="#/components/${slug(previous.name)}">← ${title(previous.name)}</a>` : '<span></span>'}${next ? `<a href="#/components/${slug(next.name)}">${title(next.name)} →</a>` : '<span></span>'}</nav>`;
     const genericApi = $('.props-table'); if (genericApi) genericApi.outerHTML = apiTable(item.name);
+    hydrateTextControls(item);
     bindPreviewOptions(item);
     initParticleLogos(main);
     initBackgroundPreviews(main);
@@ -433,11 +469,6 @@
         if (state.framework !== 'Preview') $('#framework-content').innerHTML = codeBlock(codeExample(item.name, props));
         $$('output', document.querySelector('.preview-controls')).forEach(output => { const input = output.parentElement.querySelector('input[type=range]'); if (input) output.textContent = input.value; });
         return;
-      }
-      if (options.children) {
-        const targets = $$('[data-preview-text]', stage);
-        const fallback = stage.querySelector('.pv-button,.pv-card h3,.pv-heading h3,.pv-alert b,.pv-toast b,.pv-empty h3,.pv-sheet b,.pv-drawer b,.pv-effect b,.pv-toggle,.pv-tabs p,.pv-collapsible button,strong');
-        (targets.length ? targets : fallback ? [fallback] : []).forEach(target => { target.textContent = options.children; });
       }
       stage.dataset.size = options.size || 'md'; stage.dataset.status = options.status || options.tone || 'default'; stage.dataset.density = options.density || 'comfortable'; stage.dataset.align = options.align || 'center'; stage.dataset.placement = options.placement || 'center'; stage.dataset.animated = options.animated === false ? 'false' : 'true'; stage.dataset.disabled = String(Boolean(options.disabled)); stage.style.setProperty('--preview-intensity', `${options.intensity || 70}%`); stage.style.setProperty('--ui-primary', options.color || '#5b55e7'); stage.style.setProperty('--ui-focus-ring', options.color || '#5b55e7'); stage.style.setProperty('--ui-border-color', options.borderColor || '#8f96a8'); stage.style.setProperty('--preview-border-width', options.border || '1px'); stage.setAttribute('aria-disabled', String(Boolean(options.disabled)));
       $$('button,input,select,textarea', stage).forEach(element => { element.disabled = Boolean(options.disabled); });
@@ -517,6 +548,10 @@
   document.addEventListener('click', event => {
     const backdrop = event.target.closest?.('[data-overlay]');
     if (backdrop && event.target === backdrop) { backdrop.hidden = true; return; }
+    $$('.pv-popover [data-popover]:not([hidden])').forEach(panel => { if (!panel.closest('.pv-popover').contains(event.target)) panel.hidden = true; });
+    $$('.pv-menu [data-menu]:not([hidden])').forEach(panel => { if (!panel.closest('.pv-menu').contains(event.target)) panel.hidden = true; });
+    $$('.pv-context [data-context]:not([hidden])').forEach(panel => { if (!panel.closest('.pv-context').contains(event.target)) panel.hidden = true; });
+    $$('.pv-card-menu:not([hidden])').forEach(panel => { if (!panel.closest('.pv-card').contains(event.target)) panel.hidden = true; });
     const componentLink = event.target.closest('[data-component-link]'); if (componentLink && !event.target.closest('button,input,select,a')) { location.hash = '#/'+componentLink.dataset.componentLink; return; }
     const framework = event.target.closest('[data-framework]'); if (framework) { state.framework = framework.dataset.framework; const item = findComponent(location.hash.slice(14)); if (item) renderComponent(item); return; }
     const copyCode = event.target.closest('[data-copy-code]'); if (copyCode) { navigator.clipboard.writeText(copyCode.parentElement.querySelector('code').innerText); copyCode.textContent = t('copied'); setTimeout(() => copyCode.textContent = t('copy'),1200); return; }
@@ -533,6 +568,6 @@
   $('#locale-select').addEventListener('change', event => { state.locale = event.target.value; localStorage.setItem('gozion-locale',state.locale); applyLocale(); });
   $('#theme-select').addEventListener('change', event => { applyTheme(event.target.value); route(false); });
   $('#menu-toggle').addEventListener('click',() => $('#sidebar').classList.toggle('open'));
-  document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape') { if (dialog.open) dialog.close(); $$('[data-overlay]').forEach(overlay => overlay.hidden = true); } });
+  document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape') { if (dialog.open) dialog.close(); $$('[data-overlay],[data-popover],[data-menu],[data-context],.pv-card-menu').forEach(panel => panel.hidden = true); } });
   addEventListener('hashchange', () => route()); applyTheme(state.theme); applyLocale();
 })();
