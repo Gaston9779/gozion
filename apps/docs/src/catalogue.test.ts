@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const source = readFileSync(new URL('../docs.js', import.meta.url), 'utf8');
+const indexSource = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+const previewStyles = readFileSync(new URL('../preview-fixes.css', import.meta.url), 'utf8');
 const tokenStyles = readFileSync(new URL('../../../packages/styles/src/tokens.css', import.meta.url), 'utf8');
 const ballpitSource = readFileSync(new URL('../../../packages/react/src/particles/react-bits/Ballpit/Ballpit.tsx', import.meta.url), 'utf8');
 const groupsSource = source.match(/const groups = \{([\s\S]*?)\n  \};/)?.[1] ?? '';
@@ -71,6 +73,13 @@ describe('documentation catalogue', () => {
     expect(ballpitSource).toContain('new MeshPhysicalMaterial');
     expect(ballpitSource).not.toContain('RE_Direct_Scattering');
     expect(ballpitSource).not.toContain('onBeforeCompile = shader');
+  });
+
+  it('uses an Outfit Gozion wordmark instead of an image in the docs header', () => {
+    expect(indexSource).toContain('family=Outfit');
+    expect(indexSource).not.toContain('class="brand" href="#/getting-started" aria-label="Gozion UI"><img');
+    expect(indexSource).toContain('class="brand" href="#/getting-started" aria-label="Gozion home">Gozion</a>');
+    expect(previewStyles).toContain("font-family:'Outfit'");
   });
 
   it('ships light, dark, and a distinct warm system palette', () => {
