@@ -5,10 +5,10 @@ import { getParticleEffect } from '@gozion-ui/react/particles';
 type MountedPreview = { root: Root; cancelled: boolean };
 const mounted = new WeakMap<HTMLElement, MountedPreview>();
 const defaults: Record<string, Record<string, unknown>> = {
-  // These two effects do not have useful visual defaults upstream: Grid
-  // Distortion requires an image and Ballpit defaults every sphere to black.
-  // Keep the documentation preview self-contained and visible.
+  // These effects receive stable, self-contained defaults so the preview is
+  // the actual package component—not a separate placeholder illustration.
   'grid-distortion': { grid: 18, mouse: 0.16, strength: 0.22, relaxation: 0.9 },
+  'grid-motion': { items: ['Gozion','React','Vue','Angular','Tokens','Themes','Motion','A11y'], gradientColor: '#5b55e7', rows: 4, columns: 7, gap: 12, itemBackground: '#11131b' },
   ballpit: { count: 72, colors: [0x8b5cf6, 0x22d3ee, 0xf472b6, 0xfbbf24], ambientColor: 0xffffff, ambientIntensity: 1.35, lightIntensity: 240, gravity: 0.35, followCursor: true, minSize: 0.35, maxSize: 0.8 },
   'dot-field': { dotRadius: 1.7, dotSpacing: 14, cursorRadius: 500, cursorForce: 0.1, gradientFrom: '#d8c7ff', gradientTo: '#72e2d8', glowColor: '#0b0d18' },
   waves: { lineColor: '#e8ddff', backgroundColor: '#0b0d18', waveSpeedX: 0.012, waveAmpX: 32 },

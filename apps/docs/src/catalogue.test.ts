@@ -43,6 +43,21 @@ describe('documentation catalogue', () => {
     expect(source).toContain('data-option="key3"');
   });
 
+  it('documents Grid Motion composition controls and a self-contained Grid Distortion preview', () => {
+    expect(source).toContain("'grid-motion': [{prop:'items'");
+    expect(source).toContain("{prop:'rows'");
+    expect(source).toContain("{prop:'columns'");
+    expect(source).toContain('GridMotion\\n  items={[');
+    expect(source).toContain('imageSrc quando vuoi sostituire il visual predefinito');
+  });
+
+  it('includes practical installation, props, and framework examples', () => {
+    expect(source).toContain('pnpm add @gozion-ui/react @gozion-ui/styles');
+    expect(source).toContain('from "@gozion-ui/vue"');
+    expect(source).toContain('from "@gozion-ui/angular"');
+    expect(source).toContain('Ogni controllo nell’anteprima aggiorna il codice copiabile');
+  });
+
   it('ships light, dark, and a distinct warm system palette', () => {
     expect(tokenStyles).toContain('[data-ui-theme="light"]');
     expect(tokenStyles).toContain('[data-ui-theme="dark"]');

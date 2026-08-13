@@ -169,10 +169,14 @@
       const values = Object.fromEntries(controls.filter(control => control.type !== 'colors').map(control => [control.prop, props[control.prop] ?? control.value]));
       const colorGroup = controls.find(control => control.type === 'colors');
       if (colorGroup) values[particle.slug === 'ballpit' ? 'colors' : colorGroup.prop] = props[particle.slug === 'ballpit' ? 'colors' : colorGroup.prop] ?? colorGroup.value;
-      const reactValue = value => typeof value === 'boolean' ? `{${value}}` : typeof value === 'number' ? `{${value}}` : Array.isArray(value) ? `{[${value.map(item => typeof item === 'string' ? `'${item}'` : item).join(', ')}]}` : `"${value}"`;
-      const attrs = Object.entries(values).map(([key,value]) => `${key}=${reactValue(value)}`).join(' ');
-      if (state.framework === 'Vue') return `<${name} ${Object.entries(values).map(([key,value]) => typeof value === 'string' ? `${key}="${value}"` : `:${key}="${Array.isArray(value) ? JSON.stringify(value) : value}"`).join(' ')} />`;
-      if (state.framework === 'Angular') return `<ui-${slug(name)} ${Object.entries(values).map(([key,value]) => typeof value === 'string' ? `${key}="${value}"` : `[${key}]="${Array.isArray(value) ? JSON.stringify(value) : value}"`).join(' ')}></ui-${slug(name)}>`;
+      const itemList = value => String(value).split(',').map(item => item.trim()).filter(Boolean);
+      const reactValue = (value, key) => key === 'items' && particle.slug === 'grid-motion' && typeof value === 'string'
+        ? `{[${itemList(value).map(item => `'${quote(item)}'`).join(', ')}]}`
+        : typeof value === 'boolean' ? `{${value}}` : typeof value === 'number' ? `{${value}}` : Array.isArray(value) ? `{[${value.map(item => typeof item === 'string' ? `'${item}'` : item).join(', ')}]}` : `"${value}"`;
+      const attrs = Object.entries(values).map(([key,value]) => `${key}=${reactValue(value, key)}`).join(' ');
+      const frameworkParticleValue = (key, value) => key === 'items' && particle.slug === 'grid-motion' && typeof value === 'string' ? JSON.stringify(itemList(value)) : (Array.isArray(value) ? JSON.stringify(value) : value);
+      if (state.framework === 'Vue') return `<${name} ${Object.entries(values).map(([key,value]) => typeof value === 'string' && key !== 'items' ? `${key}="${value}"` : `:${key}="${frameworkParticleValue(key, value)}"`).join(' ')} />`;
+      if (state.framework === 'Angular') return `<ui-${slug(name)} ${Object.entries(values).map(([key,value]) => typeof value === 'string' && key !== 'items' ? `${key}="${value}"` : `[${key}]="${frameworkParticleValue(key, value)}"`).join(' ')}></ui-${slug(name)}>`;
       const examples = {
         'grid-distortion': `<GridDistortion imageSrc="/images/product-canvas.jpg" grid={18} strength={0.22} mouse={0.16} relaxation={0.9} />`,
         ballpit: `<Ballpit count={72} colors={[0x8b5cf6, 0x22d3ee, 0xf472b6]} gravity={0.35} followCursor />`,
@@ -271,6 +275,7 @@
   // not the generic component chrome controls used by the rest of the docs.
   const particleControls = {
     'grid-distortion': [{prop:'grid',label:'Grid resolution',type:'range',min:8,max:36,step:1,value:18},{prop:'strength',label:'Distortion',type:'range',min:.02,max:.6,step:.01,value:.22},{prop:'mouse',label:'Cursor radius',type:'range',min:.03,max:.5,step:.01,value:.16},{prop:'relaxation',label:'Relaxation',type:'range',min:.72,max:.98,step:.01,value:.9}],
+    'grid-motion': [{prop:'items',label:'Items (comma separated)',type:'text',value:'Gozion, React, Vue, Angular, Tokens, Themes, Motion, A11y'},{prop:'gradientColor',label:'Ambient gradient',type:'color',value:'#5b55e7'},{prop:'itemBackground',label:'Card background',type:'color',value:'#11131b'},{prop:'rows',label:'Rows',type:'range',min:2,max:6,step:1,value:4},{prop:'columns',label:'Columns',type:'range',min:3,max:9,step:1,value:7},{prop:'gap',label:'Grid gap',type:'range',min:4,max:28,step:1,value:12}],
     ballpit: [{prop:'count',label:'Sphere count',type:'range',min:20,max:160,step:1,value:72},{prop:'gravity',label:'Gravity',type:'range',min:0,max:1.2,step:.05,value:.35},{prop:'ballColors',label:'Sphere colours',type:'colors',value:['#8b5cf6','#22d3ee','#f472b6']},{prop:'ambientColor',label:'Ambient light',type:'color',value:'#1c2748'},{prop:'lightIntensity',label:'Light intensity',type:'range',min:20,max:420,step:5,value:200},{prop:'canvasBackground',label:'Canvas background',type:'color',value:'#090c14'},{prop:'followCursor',label:'Follow cursor',type:'check',value:true}],
     aurora: [{prop:'colorStops',label:'Aurora colours',type:'colors',value:['#5227ff','#7cff67','#22d3ee']},{prop:'amplitude',label:'Wave amplitude',type:'range',min:.1,max:2.5,step:.05,value:1},{prop:'blend',label:'Colour blend',type:'range',min:0,max:1,step:.05,value:.5},{prop:'speed',label:'Flow speed',type:'range',min:.1,max:3,step:.05,value:1}],
     orb: [{prop:'hue',label:'Orb hue',type:'range',min:0,max:360,step:1,value:0},{prop:'hoverIntensity',label:'Hover energy',type:'range',min:0,max:1,step:.05,value:.35},{prop:'rotateOnHover',label:'Rotate on hover',type:'check',value:true},{prop:'backgroundColor',label:'Canvas background',type:'color',value:'#090c14'}],
@@ -293,6 +298,7 @@
     if (control.type === 'check') return `<label class="check-control"><input data-particle-option="${control.prop}" type="checkbox" ${control.value ? 'checked' : ''}>${control.label}</label>`;
     if (control.type === 'colors') return `<div class="particle-colors"><span>${control.label}</span>${control.value.map((color,index) => `<input aria-label="${control.label} ${index + 1}" data-particle-option="${control.prop}-${index}" type="color" value="${color}">`).join('')}</div>`;
     if (control.type === 'color') return `<label class="color-control">${control.label}<input data-particle-option="${control.prop}" type="color" value="${control.value}"></label>`;
+    if (control.type === 'text') return `<label class="text-slot-control"><span>${control.label}</span><input data-particle-option="${control.prop}" type="text" value="${escAttr(control.value)}"></label>`;
     return `<label class="range-control">${control.label}<output>${control.value}</output><input data-particle-option="${control.prop}" type="range" min="${control.min}" max="${control.max}" step="${control.step}" value="${control.value}"></label>`;
   }
   function getParticleControls(slug) {
@@ -338,7 +344,7 @@
   };
   function apiTable(name) {
     const particle = particleEffect(name);
-    const typeFor = control => control.type === 'check' ? 'boolean' : control.type === 'color' ? 'string (hex color)' : control.type === 'colors' ? 'number[]' : 'number';
+    const typeFor = control => control.type === 'check' ? 'boolean' : control.type === 'color' ? 'string (hex color)' : control.type === 'colors' ? 'number[]' : control.type === 'text' ? 'string' : 'number';
     const particleRows = particle ? getParticleControls(particle.slug).map(control => [control.prop === 'ballColors' ? 'colors' : control.prop,typeFor(control),Array.isArray(control.value) ? `[${control.value.join(', ')}]` : String(control.value),control.label]) : null;
     const rows = particleRows || contractProps[name] || [['children','ReactNode','—','Composed content or slot content.'],['variant','string','default','Semantic visual intent.'],['size','Size','md','Density token where supported.'],['disabled','boolean','false','Non-interactive visual and semantic state.']];
     return `<table class="props-table" data-api-table><thead><tr><th>Prop / slot</th><th>Type</th><th>Default</th><th>Description</th></tr></thead><tbody>${rows.map(([prop,type,defaultValue,desc]) => `<tr><td><code>${prop}</code></td><td>${type}</td><td>${defaultValue}</td><td>${desc}</td></tr>`).join('')}</tbody></table>`;
@@ -521,7 +527,8 @@
         const props = {};
         Object.entries(particleOptions).forEach(([key, value]) => {
           if (key.includes('-') || key === 'canvasBackground') return;
-          props[key] = typeof value === 'string' && $(`[data-particle-option="${key}"]`).type === 'range' ? Number(value) : value;
+          const input = $(`[data-particle-option="${key}"]`);
+          props[key] = typeof value === 'string' && input?.type === 'range' ? Number(value) : value;
         });
         getParticleControls(particle.slug).filter(control => control.type === 'colors').forEach(control => {
           const colors = control.value.map((_, index) => particleOptions[`${control.prop}-${index}`]);
@@ -554,12 +561,16 @@
   function renderInstallation() {
     const isIt = state.locale === 'it';
     const install = (title, command) => '<h3 class="install-subtitle">' + title + '</h3>' + codeBlock(command);
-    const reactExample = 'import "@gozion-ui/styles";\nimport { Button, Card, ThemeProvider } from "@gozion-ui/react";\n\nexport function App() {\n  return <ThemeProvider theme="dark"><Card title="Project settings"><Button variant="primary">Save changes</Button></Card></ThemeProvider>;\n}';
-    const vueExample = '<script setup>\nimport "@gozion-ui/styles";\nimport { Button, Card } from "@gozion-ui/vue";\n</script>\n\n<template><Card><template #title>Project settings</template><Button variant="primary">Save changes</Button></Card></template>';
-    const angularExample = 'import "@gozion-ui/styles";\nimport { Component } from "@angular/core";\nimport { ButtonComponent, CardComponent } from "@gozion-ui/angular";\n\n@Component({ standalone: true, imports: [ButtonComponent, CardComponent], template: "<ui-card><span card-title>Project settings</span><ui-button variant=\\"primary\\">Save changes</ui-button></ui-card>" })\nexport class AppComponent {}';
+    const reactExample = 'import "@gozion-ui/styles";\nimport { Button, Card, FormControl, Input, ThemeProvider } from "@gozion-ui/react";\n\nexport function App() {\n  return (\n    <ThemeProvider theme="light">\n      <Card title="Project settings" variant="default">\n        <FormControl label="Workspace name" hint="Visible to your team">\n          <Input placeholder="Gozion" status="success" size="md" />\n        </FormControl>\n        <Button variant="primary" size="md">Save changes</Button>\n      </Card>\n    </ThemeProvider>\n  );\n}';
+    const vueExample = '<script setup>\nimport "@gozion-ui/styles";\nimport { ref } from "vue";\nimport { Button, Card, FormControl, Input } from "@gozion-ui/vue";\nconst workspace = ref("Gozion");\n</script>\n\n<template>\n  <section data-ui-theme="light">\n    <Card>\n      <FormControl label="Workspace name" hint="Visible to your team">\n        <Input v-model="workspace" status="success" placeholder="Gozion" />\n      </FormControl>\n      <Button variant="primary">Save changes</Button>\n    </Card>\n  </section>\n</template>';
+    const angularExample = 'import "@gozion-ui/styles";\nimport { Component } from "@angular/core";\nimport { ButtonComponent, CardComponent, FormControlComponent, InputComponent } from "@gozion-ui/angular";\n\n@Component({\n  standalone: true,\n  imports: [ButtonComponent, CardComponent, FormControlComponent, InputComponent],\n  template: `<main data-ui-theme="light">\n    <ui-card>\n      <ui-form-control label="Workspace name" hint="Visible to your team">\n        <ui-input value="Gozion" status="success" placeholder="Gozion"></ui-input>\n      </ui-form-control>\n      <ui-button variant="primary">Save changes</ui-button>\n    </ui-card>\n  </main>`\n})\nexport class AppComponent {}';
+    const apiExample = isIt
+      ? '<Button variant="primary" size="lg" disabled={false}>\n  Salva progetto\n</Button>\n\n<Input\n  placeholder="nome@azienda.com"\n  status="error"\n  color="#171044"\n  borderColor="#dc3545"\n  borderWidth="2px"\n/>'
+      : '<Button variant="primary" size="lg" disabled={false}>\n  Save project\n</Button>\n\n<Input\n  placeholder="name@company.com"\n  status="error"\n  color="#171044"\n  borderColor="#dc3545"\n  borderWidth="2px"\n/>';
+    const particleExample = 'import { GridMotion, GridDistortion } from "@gozion-ui/react/particles";\n\n<GridMotion\n  items={["Gozion", "React", "Vue", "Angular"]}\n  rows={4}\n  columns={7}\n  gap={12}\n  gradientColor="#5b55e7"\n  itemBackground="#11131b"\n/>\n\n<GridDistortion grid={18} strength={0.22} mouse={0.16} relaxation={0.9} />';
     main.innerHTML = [
       '<p class="eyebrow">' + t('start') + '</p><h1 class="page-title">' + t('install') + ' Gozion UI</h1>',
-      '<p class="page-intro">' + (isIt ? 'Installa l’adapter del tuo framework e gli stili condivisi; poi importa solo i componenti che usi.' : 'Install your framework adapter and shared styles, then import only the components you use.') + '</p>',
+      '<p class="page-intro">' + (isIt ? 'Guida pratica: installa il pacchetto, importa gli stili, componi la UI con props esplicite e usa le API delle singole pagine per ogni opzione disponibile.' : 'A practical guide: install the package, import styles, compose UI with explicit props, and use every component page API for all available options.') + '</p>',
       '<h2 class="section-title">1. ' + (isIt ? 'Scegli il tuo framework' : 'Choose your framework') + '</h2>',
       '<p class="section-intro">' + (isIt ? 'Gli esempi usano pnpm; npm e yarn funzionano allo stesso modo.' : 'Examples use pnpm; npm and yarn work the same way.') + '</p>',
       install('React', 'pnpm add @gozion-ui/react @gozion-ui/styles'),
@@ -570,13 +581,17 @@
       codeBlock('import "@gozion-ui/styles";'),
       '<h2 class="section-title">3. ' + (isIt ? 'Crea il primo componente' : 'Build your first component') + '</h2>',
       '<div class="install-examples"><article><h3>React</h3>' + codeBlock(reactExample) + '</article><article><h3>Vue</h3>' + codeBlock(vueExample) + '</article><article><h3>Angular</h3>' + codeBlock(angularExample) + '</article></div>',
-      '<h2 class="section-title">4. ' + (isIt ? 'Applica un tema' : 'Apply a theme') + '</h2>',
+      '<h2 class="section-title">4. ' + (isIt ? 'Leggi e usa le props' : 'Read and use props') + '</h2>',
+      '<p class="section-intro">' + (isIt ? 'Ogni controllo nell’anteprima aggiorna il codice copiabile. I nomi sono prop pubbliche: variant e size definiscono l’aspetto; status usa colori semantici; color, borderColor e borderWidth sono override locali; disabled mantiene semantica e blocca l’interazione.' : 'Every preview control updates the copyable code. Names are public props: variant and size define appearance; status uses semantic colors; color, borderColor and borderWidth are local overrides; disabled preserves semantics and blocks interaction.') + '</p>',
+      codeBlock(apiExample),
+      '<h2 class="section-title">5. ' + (isIt ? 'Compone layout e particellari' : 'Compose layout and particles') + '</h2>',
+      '<p class="section-intro">' + (isIt ? 'Layout e particellari ricevono solo props coerenti con il loro comportamento. Per Grid Motion, items è il contenuto delle card; rows, columns e gap definiscono la composizione. Grid Distortion funziona senza asset esterni e accetta imageSrc quando vuoi sostituire il visual predefinito.' : 'Layout and particles receive only behavior-relevant props. In Grid Motion, items is card content; rows, columns and gap define composition. Grid Distortion works without external assets and accepts imageSrc when you want to replace the default visual.') + '</p>',
+      codeBlock(particleExample),
+      '<h2 class="section-title">6. ' + (isIt ? 'Applica un tema' : 'Apply a theme') + '</h2>',
       '<p class="section-intro">' + (isIt ? 'In React usa ThemeProvider; in qualsiasi framework puoi applicare data-ui-theme al contenitore dell’app.' : 'In React use ThemeProvider; in any framework you can apply data-ui-theme to the app container.') + '</p>',
       codeBlock('<main data-ui-theme="light">\n  <!-- your Gozion UI -->\n</main>'),
-      '<div class="a11y-note"><strong>' + (isIt ? 'Da ricordare.' : 'Keep in mind.') + '</strong> ' + (isIt ? 'Gli stili abilitano layout, temi, focus visibile e stati disabled: importali una sola volta a livello app.' : 'Styles enable layout, themes, visible focus, and disabled states: import them once at app level.') + '</div>'
+      '<div class="a11y-note"><strong>' + (isIt ? 'Come usare la documentazione.' : 'How to use the documentation.') + '</strong> ' + (isIt ? 'Per ogni componente: prova i controlli, seleziona React/Vue/Angular, copia lo snippet aggiornato e consulta la tabella API sotto la preview. Gli stili abilitano layout, temi, focus visibile e stati disabled: importali una sola volta a livello app.' : 'For every component: try controls, select React/Vue/Angular, copy the updated snippet, and consult the API table below the preview. Styles enable layout, themes, visible focus, and disabled states: import them once at app level.') + '</div>'
     ].join('');
-    return;
-    main.innerHTML = `<p class="eyebrow">${t('start')}</p><h1 class="page-title">${t('install')} Gozion UI</h1><p class="page-intro">${state.locale === 'it' ? 'Inizializza token e stili, poi aggiungi soltanto i componenti necessari.' : 'Initialize tokens and styles, then add only the components you need.'}</p>${codeBlock('npx gozion-ui@latest init')}<h2 class="section-title">${t('components')}</h2>${codeBlock('npx gozion-ui@latest add button card input')}`;
   }
   function renderStudio() {
     const palettes = {light:['#6e5c84','#5c8580','#f6f1e8','#fffaf3','#29251f','#ded4c7'],dark:['#928cff','#47c5c8','#0d0f14','#151820','#f4f5f8','#2d3340']};

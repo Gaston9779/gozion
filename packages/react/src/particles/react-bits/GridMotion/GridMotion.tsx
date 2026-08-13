@@ -1,27 +1,34 @@
 // @ts-nocheck
-import { useEffect, useRef, FC, ReactNode } from 'react';
+import { useEffect, useRef, FC, ReactNode, type CSSProperties } from 'react';
 import { gsap } from 'gsap';
 import './GridMotion.css';
 
 interface GridMotionProps {
-  items?: (string | ReactNode)[];
+  /** Card contents. A comma-separated string is accepted as a convenient shorthand. */
+  items?: (string | ReactNode)[] | string;
   gradientColor?: string;
+  rows?: number;
+  columns?: number;
+  gap?: number;
+  itemBackground?: string;
 }
 
-const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = 'black' }) => {
+const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = '#5b55e7', rows = 4, columns = 7, gap = 12, itemBackground = '#11131b' }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
   const mouseXRef = useRef<number>(window.innerWidth / 2);
 
-  const totalItems = 28;
+  const totalItems = Math.max(1, rows * columns);
   const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
-  const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
+  const normalizedItems = typeof items === 'string' ? items.split(',').map(item => item.trim()).filter(Boolean) : items;
+  const combinedItems = normalizedItems.length > 0 ? Array.from({ length: totalItems }, (_, index) => normalizedItems[index % normalizedItems.length]) : defaultItems;
 
   useEffect(() => {
     gsap.ticker.lagSmoothing(0);
 
-    const handleMouseMove = (e: MouseEvent): void => {
-      mouseXRef.current = e.clientX;
+    const handlePointerMove = (e: PointerEvent): void => {
+      const rect = gridRef.current?.getBoundingClientRect();
+      if (rect) mouseXRef.current = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
     };
 
     const updateMotion = (): void => {
@@ -32,7 +39,8 @@ const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = 'black' }
       rowRefs.current.forEach((row, index) => {
         if (row) {
           const direction = index % 2 === 0 ? 1 : -1;
-          const moveAmount = ((mouseXRef.current / window.innerWidth) * maxMoveAmount - maxMoveAmount / 2) * direction;
+          const width = gridRef.current?.getBoundingClientRect().width || window.innerWidth;
+          const moveAmount = ((mouseXRef.current / width) * maxMoveAmount - maxMoveAmount / 2) * direction;
 
           gsap.to(row, {
             x: moveAmount,
@@ -45,10 +53,11 @@ const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = 'black' }
     };
 
     const removeAnimationLoop = gsap.ticker.add(updateMotion);
-    window.addEventListener('mousemove', handleMouseMove);
+    const host = gridRef.current;
+    host?.addEventListener('pointermove', handlePointerMove);
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      host?.removeEventListener('pointermove', handlePointerMove);
       removeAnimationLoop();
     };
   }, []);
@@ -57,12 +66,10 @@ const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = 'black' }
     <div className="noscroll loading" ref={gridRef}>
       <section
         className="intro"
-        style={{
-          background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`
-        }}
+        style={{ background: `radial-gradient(circle at 50% 50%, ${gradientColor} 0%, transparent 68%)` }}
       >
-        <div className="gridMotion-container">
-          {Array.from({ length: 4 }, (_, rowIndex) => (
+        <div className="gridMotion-container" style={{ '--grid-motion-gap': `${gap}px`, '--grid-motion-columns': columns, '--grid-motion-rows': rows } as CSSProperties}>
+          {Array.from({ length: rows }, (_, rowIndex) => (
             <div
               key={rowIndex}
               className="row"
@@ -70,11 +77,11 @@ const GridMotion: FC<GridMotionProps> = ({ items = [], gradientColor = 'black' }
                 rowRefs.current[rowIndex] = el;
               }}
             >
-              {Array.from({ length: 7 }, (_, itemIndex) => {
-                const content = combinedItems[rowIndex * 7 + itemIndex];
+              {Array.from({ length: columns }, (_, itemIndex) => {
+                const content = combinedItems[rowIndex * columns + itemIndex];
                 return (
                   <div key={itemIndex} className="row__item">
-                    <div className="row__item-inner" style={{ backgroundColor: '#111' }}>
+                    <div className="row__item-inner" style={{ backgroundColor: itemBackground }}>
                       {typeof content === 'string' && content.startsWith('http') ? (
                         <div
                           className="row__item-img"

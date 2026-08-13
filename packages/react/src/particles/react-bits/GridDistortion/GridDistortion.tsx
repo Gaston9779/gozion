@@ -12,10 +12,14 @@ interface GridDistortionProps {
   className?: string;
 }
 
-// A built-in SVG keeps the component useful out of the box. Previously an
-// omitted imageSrc made the shader sample an empty texture, resulting in a
-// completely blank preview.
-const fallbackImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720"%3E%3Cdefs%3E%3ClinearGradient id="a" x1="0" x2="1" y1="0" y2="1"%3E%3Cstop stop-color="%238b5cf6"/%3E%3Cstop offset=".5" stop-color="%2322d3ee"/%3E%3Cstop offset="1" stop-color="%23f472b6"/%3E%3C/linearGradient%3E%3Cfilter id="b"%3E%3CfeGaussianBlur stdDeviation="34"/%3E%3C/filter%3E%3C/defs%3E%3Crect width="1200" height="720" fill="%23090c14"/%3E%3Ccircle cx="285" cy="200" r="250" fill="%238b5cf6" opacity=".72" filter="url(%23b)"/%3E%3Ccircle cx="870" cy="520" r="270" fill="%2322d3ee" opacity=".62" filter="url(%23b)"/%3E%3Cpath d="M280 490V225l210-125 210 125v70l-115-68-95 56v150l95 56 115-68v72L490 612z" fill="none" stroke="url(%23a)" stroke-width="46" stroke-linejoin="round"/%3E%3C/svg%3E';
+function createFallbackTexture() {
+  const canvas = document.createElement('canvas'); canvas.width = 1200; canvas.height = 720;
+  const ctx = canvas.getContext('2d')!;
+  const base = ctx.createLinearGradient(0, 0, 1200, 720); base.addColorStop(0, '#171044'); base.addColorStop(.48, '#082b42'); base.addColorStop(1, '#18102e'); ctx.fillStyle = base; ctx.fillRect(0, 0, 1200, 720);
+  [[260,210,250,'#8b5cf6'],[895,505,270,'#22d3ee'],[760,155,175,'#f472b6']].forEach(([x,y,r,color]) => { const glow = ctx.createRadialGradient(x as number,y as number,0,x as number,y as number,r as number); glow.addColorStop(0, `${color}cc`); glow.addColorStop(1, `${color}00`); ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(x as number,y as number,r as number,0,Math.PI*2); ctx.fill(); });
+  ctx.strokeStyle = '#f5f3ff'; ctx.lineWidth = 18; ctx.globalAlpha = .86; ctx.strokeRect(390, 150, 420, 420); ctx.globalAlpha = 1;
+  const texture = new THREE.CanvasTexture(canvas); texture.minFilter = THREE.LinearFilter; texture.magFilter = THREE.LinearFilter; return texture;
+}
 
 const vertexShader = `
 uniform float time;
@@ -47,7 +51,7 @@ const GridDistortion: React.FC<GridDistortionProps> = ({
   mouse = 0.1,
   strength = 0.15,
   relaxation = 0.9,
-  imageSrc = fallbackImage,
+  imageSrc,
   className = ''
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -90,16 +94,22 @@ const GridDistortion: React.FC<GridDistortionProps> = ({
       uDataTexture: { value: null as THREE.DataTexture | null }
     };
 
+    const fallbackTexture = createFallbackTexture();
+    fallbackTexture.colorSpace = THREE.SRGBColorSpace;
+    uniforms.uTexture.value = fallbackTexture;
+    imageAspectRef.current = fallbackTexture.image.width / fallbackTexture.image.height;
     const textureLoader = new THREE.TextureLoader();
-    textureLoader.load(imageSrc, texture => {
+    if (imageSrc) textureLoader.load(imageSrc, texture => {
       texture.minFilter = THREE.LinearFilter;
       texture.magFilter = THREE.LinearFilter;
       texture.wrapS = THREE.ClampToEdgeWrapping;
       texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.colorSpace = THREE.SRGBColorSpace;
+      fallbackTexture.dispose();
       imageAspectRef.current = texture.image.width / texture.image.height;
       uniforms.uTexture.value = texture;
       handleResize();
-    });
+    }, undefined, () => { /* The synchronous canvas fallback remains visible. */ });
 
     const size = grid;
     const data = new Float32Array(4 * size * size);
