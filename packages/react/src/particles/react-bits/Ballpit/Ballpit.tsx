@@ -882,12 +882,18 @@ const Ballpit: React.FC<BallpitProps> = ({ className = '', followCursor = true, 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    spheresInstanceRef.current = createBallpit(canvas, {
-      followCursor,
-      ...props
+    // The preview host may be committed before its flex/grid dimensions have
+    // settled. Creating Three.js with a 0×0 drawing buffer leaves Ballpit
+    // permanently blank, so initialise on the next rendered frame.
+    let frame = requestAnimationFrame(() => {
+      spheresInstanceRef.current = createBallpit(canvas, {
+        followCursor,
+        ...props
+      });
     });
 
     return () => {
+      cancelAnimationFrame(frame);
       if (spheresInstanceRef.current) {
         spheresInstanceRef.current.dispose();
         spheresInstanceRef.current = null;
