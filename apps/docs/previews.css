@@ -1954,9 +1954,6 @@ body {
   }
 }
 @media (max-width: 760px) {
-  .header-select.theme-select {
-    display: none;
-  }
   .card-preview {
     height: 7.5rem;
   }

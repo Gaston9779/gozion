@@ -562,8 +562,32 @@ a {
   background: var(--ui-surface);
 }
 .studio-controls h3 {
-  margin: 0.2rem 0 1rem;
+  margin: 1.35rem 0 0.65rem;
   font-size: 0.9rem;
+}
+.studio-controls h3:first-of-type {
+  margin-top: 1.35rem;
+}
+.studio-explainer {
+  padding: 0.85rem;
+  border: 1px solid color-mix(in srgb, var(--ui-primary) 30%, var(--ui-border-color));
+  border-radius: 0.65rem;
+  background: color-mix(in srgb, var(--ui-primary) 7%, var(--ui-surface));
+}
+.studio-explainer strong {
+  font-size: 0.82rem;
+}
+.studio-explainer p,
+.studio-control small {
+  display: block;
+  margin: 0.35rem 0 0;
+  color: var(--docs-muted);
+  font-size: 0.73rem;
+  line-height: 1.45;
+}
+.studio-mode {
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid var(--ui-border-color);
 }
 .studio-control {
   margin: 0.8rem 0;
@@ -600,6 +624,65 @@ a {
 .studio-preview {
   display: grid;
   gap: 1rem;
+}
+.studio-preview-heading,
+.studio-export {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.studio-preview-heading .eyebrow,
+.studio-export .eyebrow {
+  margin: 0;
+}
+.studio-preview-heading h2,
+.studio-export h2 {
+  margin: 0.3rem 0 0;
+  font-size: 1.15rem;
+}
+.studio-preview-heading > span {
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  background: var(--ui-surface-muted);
+  color: var(--docs-muted);
+  font-size: 0.72rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.studio-canvas {
+  display: grid;
+  gap: 1rem;
+  min-height: 33rem;
+  padding: 1.5rem;
+  border: 1px solid var(--ui-border-color);
+  border-radius: 0.9rem;
+  background: var(--ui-background);
+  color: var(--ui-foreground);
+  box-shadow: var(--ui-shadow);
+  transition: background var(--ui-transition-duration), color var(--ui-transition-duration), border-color var(--ui-transition-duration);
+}
+.studio-canvas .pv {
+  color: var(--ui-foreground);
+}
+.studio-canvas .pv-navbar,
+.studio-canvas .pv-card,
+.studio-canvas .pv-input,
+.studio-canvas .pv-switch,
+.studio-canvas .pv-badge,
+.studio-canvas .pv-button {
+  border-color: var(--ui-border-color);
+  background: var(--ui-surface);
+  color: var(--ui-foreground);
+}
+.studio-canvas .pv-button,
+.studio-canvas .pv-switch.active,
+.studio-canvas .pv-badge.primary {
+  background: var(--ui-primary);
+  color: #fff;
+}
+.studio-export {
+  margin-top: 0.5rem;
 }
 .studio-collection {
   padding: 1.5rem;

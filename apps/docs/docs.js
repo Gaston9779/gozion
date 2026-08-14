@@ -32,8 +32,7 @@
     .toLowerCase();
   const title = value => value.replace(/([A-Z])/g, ' $1').trim();
   const esc = value => value.replace(/[&<>]/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[char]));
-  const savedTheme = localStorage.getItem('gozion-theme');
-  const state = { locale: localStorage.getItem('gozion-locale') || 'it', framework: 'React', component: {}, theme: savedTheme === 'dark' ? 'dark' : 'light' };
+  const state = { locale: localStorage.getItem('gozion-locale') || 'it', framework: 'React', component: {} };
   const backgroundPreviewCleanups = new Set();
   const t = key => copy[state.locale][key] || key;
   const categoryNames = {it:{Layout:'Layout',Typography:'Tipografia',Forms:'Form',Selection:'Selezione',Navigation:'Navigazione',Overlay:'Overlay',Feedback:'Feedback','Data Display':'Visualizzazione dati',Media:'Media',Interaction:'Interazione',Effects:'Effetti',Utilities:'Utility',Particles:'Particellari'},en:{}};
@@ -597,18 +596,54 @@
     ].join('');
   }
   function renderStudio() {
-    const palettes = {light:['#6e5c84','#5c8580','#f6f1e8','#fffaf3','#29251f','#ded4c7'],dark:['#928cff','#47c5c8','#0d0f14','#151820','#f4f5f8','#2d3340']};
-    const active = palettes[root.dataset.uiTheme] || palettes.light;
-    const controls = ['primary','secondary','background','surface','foreground','border-color'].map((name,index) => [name,active[index]]);
-    main.innerHTML = `<p class="eyebrow">${t('studio')}</p><h1 class="page-title">${state.locale === 'it' ? 'Modifica il sistema visivamente.' : 'Tune the system visually.'}</h1><p class="page-intro">${state.locale === 'it' ? 'Controlli visuali, anteprima completa ed esportazione immediata dei token.' : 'Visual controls, complete preview, and instant token export.'}</p><div class="studio"><aside class="studio-controls">${controls.map(([name,value]) => `<div class="studio-control"><label>${title(name)}</label><input type="color" data-token="${name}" value="${value}"></div>`).join('')}<div class="studio-control"><label>Radius <output>10px</output></label><input type="range" data-token="radius" min="0" max="24" value="10"></div><div class="studio-control"><label>Shadow <output>18px</output></label><input type="range" data-token="shadow" min="0" max="40" value="18"></div><div class="studio-control"><label>Motion <output>160ms</output></label><input type="range" data-token="motion" min="0" max="500" step="20" value="160"></div></aside><section class="studio-preview"><div class="studio-collection">${componentPreview('Navbar')}${componentPreview('Card')}${componentPreview('Input')}${componentPreview('Switch')}<div class="studio-row">${componentPreview('Button')}${componentPreview('Badge')}</div></div><h2 class="section-title">CSS</h2><pre class="code-block css-export" id="css-output"></pre></section></div>`;
-    const update = () => { const get = key => $(`[data-token="${key}"]`).value; const values = {'--ui-primary':get('primary'),'--ui-secondary':get('secondary'),'--ui-background':get('background'),'--ui-surface':get('surface'),'--ui-foreground':get('foreground'),'--ui-border-color':get('border-color'),'--ui-radius':get('radius')+'px','--ui-shadow':`0 12px ${get('shadow')}px rgb(20 24 38 / .16)`,'--ui-transition-duration':get('motion')+'ms'}; Object.entries(values).forEach(([key,value]) => root.style.setProperty(key,value)); $$('input[type=range]',main).forEach(input => input.previousElementSibling.querySelector('output').textContent = input.value + (input.dataset.token === 'motion' ? 'ms' : 'px')); $('#css-output').textContent = ':root {\n'+Object.entries(values).map(([key,value]) => `  ${key}: ${value};`).join('\n')+'\n}'; };
-    $$('[data-token]', main).forEach(control => control.addEventListener('input', update)); update();
+    const isIt = state.locale === 'it';
+    const palettes = {
+      dark: ['#928cff','#47c5c8','#0d0f14','#151820','#f4f5f8','#2d3340'],
+      light: ['#6e5c84','#5c8580','#f6f1e8','#fffaf3','#29251f','#ded4c7']
+    };
+    const previewTheme = 'dark';
+    const controls = ['primary','secondary','background','surface','foreground','border-color'].map((name,index) => [name,palettes[previewTheme][index]]);
+    main.innerHTML = `<p class="eyebrow">${isIt ? 'THEME STUDIO' : 'THEME STUDIO'}</p>
+      <h1 class="page-title">${isIt ? 'Progetta i token, non la documentazione.' : 'Design tokens, not the documentation.'}</h1>
+      <p class="page-intro">${isIt ? 'Questa pagina modifica solo il canvas qui sotto: il sito resta sempre in Dark. Regola i token, verifica stati e contrasto, poi copia il blocco CSS pronto per la tua app.' : 'This page changes only the canvas below: the documentation always stays Dark. Tune tokens, verify states and contrast, then copy the CSS block for your app.'}</p>
+      <div class="studio">
+        <aside class="studio-controls">
+          <div class="studio-explainer"><strong>${isIt ? 'Come usarlo' : 'How to use it'}</strong><p>${isIt ? 'Scegli la superficie da simulare e modifica i token. Le modifiche sono isolate, reversibili e non alterano l’interfaccia della docs.' : 'Choose a surface to simulate and edit its tokens. Changes are isolated, reversible, and never affect the docs interface.'}</p></div>
+          <div class="studio-control studio-mode"><label for="studio-canvas-theme">${isIt ? 'Tema del canvas' : 'Canvas theme'}</label><select id="studio-canvas-theme"><option value="dark">Dark</option><option value="light">Light</option></select><small>${isIt ? 'Applica la base scelta solo alla preview.' : 'Applies the selected base only to the preview.'}</small></div>
+          <h3>${isIt ? 'Colori semantici' : 'Semantic colors'}</h3>
+          ${controls.map(([name,value]) => `<div class="studio-control"><label>${title(name)}</label><input type="color" data-token="${name}" value="${value}"></div>`).join('')}
+          <h3>${isIt ? 'Forma e movimento' : 'Shape and motion'}</h3>
+          <div class="studio-control"><label>Radius <output>10px</output></label><input type="range" data-token="radius" min="0" max="24" value="10"></div>
+          <div class="studio-control"><label>Shadow <output>18px</output></label><input type="range" data-token="shadow" min="0" max="40" value="18"></div>
+          <div class="studio-control"><label>Motion <output>160ms</output></label><input type="range" data-token="motion" min="0" max="500" step="20" value="160"></div>
+        </aside>
+        <section class="studio-preview">
+          <div class="studio-preview-heading"><div><p class="eyebrow">${isIt ? 'ANTEPRIMA ISOLATA' : 'ISOLATED PREVIEW'}</p><h2>${isIt ? 'Il tuo tema in uso' : 'Your theme in use'}</h2></div><span>${isIt ? 'Non modifica le docs' : 'Does not change the docs'}</span></div>
+          <div class="studio-canvas gozion-preview" id="studio-canvas" data-ui-theme="dark">${componentPreview('Navbar')}${componentPreview('Card')}${componentPreview('Input')}${componentPreview('Switch')}<div class="studio-row">${componentPreview('Button')}${componentPreview('Badge')}</div></div>
+          <div class="studio-export"><div><p class="eyebrow">CSS TOKENS</p><h2>${isIt ? 'Pronto da copiare' : 'Ready to copy'}</h2></div><button class="docs-button" type="button" data-copy-studio>${isIt ? 'Copia CSS' : 'Copy CSS'}</button></div>
+          <pre class="code-block css-export" id="css-output"></pre>
+        </section>
+      </div>`;
+    const canvas = $('#studio-canvas');
+    const update = () => {
+      const get = key => $(`[data-token="${key}"]`, main).value;
+      const values = {'--ui-primary':get('primary'),'--ui-secondary':get('secondary'),'--ui-background':get('background'),'--ui-surface':get('surface'),'--ui-foreground':get('foreground'),'--ui-border-color':get('border-color'),'--ui-radius':get('radius')+'px','--ui-shadow':`0 12px ${get('shadow')}px rgb(20 24 38 / .16)`,'--ui-transition-duration':get('motion')+'ms'};
+      Object.entries(values).forEach(([key,value]) => canvas.style.setProperty(key,value));
+      $$('input[type=range]',main).forEach(input => input.previousElementSibling.querySelector('output').textContent = input.value + (input.dataset.token === 'motion' ? 'ms' : 'px'));
+      $('#css-output').textContent = '.gozion-preview {\n'+Object.entries(values).map(([key,value]) => `  ${key}: ${value};`).join('\n')+'\n}';
+    };
+    $$('[data-token]', main).forEach(control => control.addEventListener('input', update));
+    $('#studio-canvas-theme').addEventListener('change', event => {
+      const palette = palettes[event.target.value];
+      canvas.dataset.uiTheme = event.target.value;
+      controls.forEach(([name], index) => $(`[data-token="${name}"]`, main).value = palette[index]);
+      update();
+    });
+    $('[data-copy-studio]').addEventListener('click', event => { navigator.clipboard.writeText($('#css-output').textContent); event.currentTarget.textContent = isIt ? 'Copiato' : 'Copied'; setTimeout(() => event.currentTarget.textContent = isIt ? 'Copia CSS' : 'Copy CSS', 1200); });
+    update();
   }
   function applyLocale() {
     root.lang = state.locale; $('#locale-select').value = state.locale; $('[data-i18n="search"]').textContent = t('search'); $('#search-input').placeholder = `${t('search')}…`; renderSidebar(); route(false);
-  }
-  function applyTheme(mode) {
-    state.theme = mode === 'dark' ? 'dark' : 'light'; localStorage.setItem('gozion-theme', state.theme); ['--ui-primary','--ui-secondary','--ui-background','--ui-surface','--ui-foreground','--ui-border-color','--ui-radius','--ui-shadow','--ui-transition-duration'].forEach(token => root.style.removeProperty(token)); root.dataset.uiTheme = state.theme; $('#theme-select').value = state.theme;
   }
   function route(scroll = true) {
     const path = location.hash.slice(2) || 'getting-started';
@@ -665,8 +700,7 @@
   function search(value = '') { const found = items.filter(item => (item.name+item.category+description(item)).toLowerCase().includes(value.toLowerCase())).slice(0,14); results.innerHTML = found.length ? found.map(item => `<a class="search-item" href="#/components/${slug(item.name)}"><strong>${title(item.name)}</strong><small>${item.category} · ${description(item)}</small></a>`).join('') : `<p class="empty-search">${state.locale === 'it' ? 'Nessun componente trovato.' : 'No components found.'}</p>`; }
   $('#search-trigger').addEventListener('click',() => { dialog.showModal(); searchInput.value=''; search(); searchInput.focus(); }); searchInput.addEventListener('input', event => search(event.target.value)); dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
   $('#locale-select').addEventListener('change', event => { state.locale = event.target.value; localStorage.setItem('gozion-locale',state.locale); applyLocale(); });
-  $('#theme-select').addEventListener('change', event => { applyTheme(event.target.value); route(false); });
   $('#menu-toggle').addEventListener('click',() => $('#sidebar').classList.toggle('open'));
   document.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); $('#search-trigger').click(); } if (event.key === 'Escape') { if (dialog.open) dialog.close(); $$('[data-overlay],[data-popover],[data-menu],[data-context],.pv-card-menu').forEach(panel => panel.hidden = true); } });
-  addEventListener('hashchange', () => route()); applyTheme(state.theme); applyLocale();
+  addEventListener('hashchange', () => route()); root.dataset.uiTheme = 'dark'; applyLocale();
 })();

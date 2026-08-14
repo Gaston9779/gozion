@@ -84,6 +84,15 @@ describe('documentation catalogue', () => {
     expect(previewStyles).toMatch(/color:\s*#fff/);
   });
 
+  it('keeps the documentation dark while Theme Studio scopes tokens to its preview canvas', () => {
+    const docsSource = readFileSync(new URL('../docs.js', import.meta.url), 'utf8');
+    expect(indexSource).toContain('<html lang="it" data-ui-theme="dark">');
+    expect(indexSource).not.toContain('id="theme-select"');
+    expect(docsSource).toContain('id="studio-canvas" data-ui-theme="dark"');
+    expect(docsSource).toContain("canvas.style.setProperty(key,value)");
+    expect(docsSource).toContain("root.dataset.uiTheme = 'dark'");
+  });
+
   it('ships light, dark, and a distinct warm system palette', () => {
     expect(tokenStyles).toContain('[data-ui-theme="light"]');
     expect(tokenStyles).toContain('[data-ui-theme="dark"]');
