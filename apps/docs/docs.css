@@ -476,10 +476,16 @@ a {
     Menlo,
     monospace;
 }
+.code-block code {
+  display: block;
+  min-width: max-content;
+  padding-right: 5.5rem;
+}
 .copy-code {
   position: absolute;
   right: 0.7rem;
   top: 0.65rem;
+  z-index: 1;
   padding: 0.3rem 0.5rem;
   border: 1px solid #4a5262;
   border-radius: 0.35rem;

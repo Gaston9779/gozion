@@ -103,32 +103,13 @@
   font-size: 0.64rem;
   letter-spacing: 0.1em;
 }
-.side-collection-primary {
-  padding: 0.9rem 0.55rem 0.25rem;
-  border: 1px solid
-    color-mix(in srgb, var(--ui-primary) 32%, var(--ui-border-color));
-  border-radius: 0.8rem;
-  background: color-mix(in srgb, var(--ui-primary) 7%, var(--ui-surface));
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--ui-primary) 8%, transparent);
-}
-.side-collection-primary > h2 {
-  color: var(--ui-primary);
-  font-size: 0.86rem;
-}
-.side-collection-primary .side-tree-links {
-  border-left-color: color-mix(
-    in srgb,
-    var(--ui-primary) 55%,
-    var(--ui-border-color)
-  );
-}
+.side-collection-primary,
 .side-collection-secondary {
-  opacity: 0.9;
   margin-top: 1.8rem;
 }
-.side-collection-secondary > h2 {
-  font-size: 0.75rem;
-  color: var(--docs-muted);
+.side-collection > h2 {
+  color: var(--ui-primary);
+  font-size: 0.8rem;
 }
 .card-preview .pv.compact {
   min-height: 0;

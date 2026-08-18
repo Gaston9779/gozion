@@ -85,19 +85,19 @@
       case 'PinInput': return wrap('<div class="pv-pin">'+['•','•','•',''].map(x=>`<input value="${x}" maxlength="1">`).join('')+'</div>');
       case 'FileUpload': return wrap(`<button class="pv-upload" data-action="upload">${icon('upload')}<b data-upload-label>Drop files or browse</b><small>PNG, JPG or PDF · 10 MB max</small></button>`);
       case 'FormControl': return wrap('<label class="pv-field"><span>Workspace name <em>*</em></span><input value="Acme design"><small class="pv-success">Looks good.</small></label>');
-      case 'Checkbox': return wrap('<label class="pv-check"><input type="checkbox" checked><span>'+icon('check')+'</span>Remember this device</label>');
-      case 'Radio': return wrap('<label class="pv-radio"><input type="radio" checked><span></span>Starter plan</label>');
-      case 'RadioGroup': return wrap('<div class="pv-radio-group"><label class="pv-radio"><input name="plan" type="radio" checked><span></span>Monthly</label><label class="pv-radio"><input name="plan" type="radio"><span></span>Yearly <b>−20%</b></label></div>');
-      case 'Switch': return wrap('<label class="pv-switch"><input type="checkbox" checked><span></span><b>Product updates</b></label>');
-      case 'Select': return wrap('<label class="pv-field"><span>Role</span><select><option>Product designer</option><option>Engineer</option><option>Founder</option></select></label>');
+      case 'Checkbox': return wrap('<label class="pv-check"><input data-checkbox type="checkbox" checked><span>'+icon('check')+'</span>Remember this device</label>');
+      case 'Radio': return wrap('<label class="pv-radio"><input data-radio type="radio" checked><span></span>Starter plan</label>');
+      case 'RadioGroup': return wrap('<div class="pv-radio-group"><label class="pv-radio"><input data-radio-group value="monthly" name="plan" type="radio" checked><span></span>Monthly</label><label class="pv-radio"><input data-radio-group value="yearly" name="plan" type="radio"><span></span>Yearly <b>−20%</b></label></div>');
+      case 'Switch': return wrap('<label class="pv-switch"><input data-switch type="checkbox" role="switch" checked><span aria-hidden="true"></span><b>Product updates</b></label>');
+      case 'Select': return wrap('<label class="pv-field"><span>Role</span><select data-select><option value="designer">Product designer</option><option value="engineer">Engineer</option><option value="founder">Founder</option></select></label>');
       case 'MultiSelect': return wrap('<div class="pv-multiselect"><span>Design <button>×</button></span><span>Research <button>×</button></span><input placeholder="Add…"></div>');
       case 'Combobox': return wrap(`<div class="pv-combo"><label>${icon('search')}<input placeholder="Find a teammate…"></label><div><button><span class="pv-avatar">AM</span><b>Anna Moss</b><small>anna@gozion.dev</small></button><button><span class="pv-avatar alt">JL</span><b>Jon Lee</b><small>jon@gozion.dev</small></button></div></div>`);
-      case 'Slider': return wrap('<label class="pv-slider"><span>Volume <output>68%</output></span><input type="range" value="68"></label>');
-      case 'RangeSlider': return wrap('<label class="pv-slider"><span>Price range <output>€20 — €80</output></span><div class="pv-range-track"><i></i><b></b><b></b></div></label>');
+      case 'Slider': return wrap('<label class="pv-slider"><span>Volume <output>68%</output></span><input data-slider type="range" value="68"></label>');
+      case 'RangeSlider': return wrap('<label class="pv-slider"><span>Price range <output>€20 — €80</output></span><div class="pv-range-slider" style="--range-start:20%;--range-end:80%"><i aria-hidden="true"></i><input data-range-min aria-label="Minimum price" type="range" min="0" max="100" value="20"><input data-range-max aria-label="Maximum price" type="range" min="0" max="100" value="80"></div></label>');
       case 'Rating': return wrap('<div class="pv-rating" aria-label="4 out of 5 stars">'+[1,2,3,4,5].map(i=>`<button data-star="${i}" class="${i<5?'on':''}">${icon('star')}</button>`).join('')+'<output>4.0</output></div>');
-      case 'SegmentedControl': return wrap('<div class="pv-segment"><button class="active">Day</button><button>Week</button><button>Month</button></div>');
+      case 'SegmentedControl': return wrap('<div class="pv-segment" role="radiogroup" aria-label="Time range"><button type="button" data-segment-value="day" class="active" role="radio" aria-checked="true">Day</button><button type="button" data-segment-value="week" role="radio" aria-checked="false">Week</button><button type="button" data-segment-value="month" role="radio" aria-checked="false">Month</button></div>');
       case 'Toggle': return wrap(`<button class="pv-toggle active" data-action="toggle">${icon('star')} Favorite</button>`);
-      case 'ToggleGroup': return wrap('<div class="pv-toggle-group"><button class="active"><b>B</b></button><button><i>I</i></button><button><u>U</u></button></div>');
+      case 'ToggleGroup': return wrap('<div class="pv-toggle-group" role="radiogroup" aria-label="Text formatting"><button type="button" role="radio" data-toggle-value="bold" class="active" aria-checked="true"><b>B</b><span class="ui-sr-only">Bold</span></button><button type="button" role="radio" data-toggle-value="italic" aria-checked="false"><i>I</i><span class="ui-sr-only">Italic</span></button><button type="button" role="radio" data-toggle-value="underline" aria-checked="false"><u>U</u><span class="ui-sr-only">Underline</span></button></div>');
       case 'Navbar': return wrap(`<nav class="pv-navbar"><b><i>G</i> Gozion</b><span>Product</span><span>Solutions</span><button>${compact?'Log in':'Get started'}</button></nav>`);
       case 'Sidebar': return wrap(`<aside class="pv-sidebar"><b>Workspace</b><button class="active">${icon('info')}Overview</button><button>${icon('star')}Projects</button><button>${icon('plus')}Create</button></aside>`);
       case 'Breadcrumb': return wrap('<nav class="pv-breadcrumb"><a>Docs</a><i>›</i><a>Components</a><i>›</i><b>Breadcrumb</b></nav>');
@@ -208,9 +208,10 @@
       return `<FormControl label="${quote(label)}" hint="${quote(hint)}">\n  <Input value={email} onChange={event => setEmail(event.target.value)} placeholder="${quote(placeholder)}"${reactAttrs(common)} />\n</FormControl>`;
     }
     if (name === 'Select') {
-      if (state.framework === 'Vue') return `<Select v-model="role" :options="roles" label="Role" />`;
-      if (state.framework === 'Angular') return `<ui-select [options]="roles" [(value)]="role" label="Role"></ui-select>`;
-      return `<Select label="Role" options={roles} value={role} onChange={setRole} />`;
+      const value = props.value || 'designer';
+      if (state.framework === 'Vue') return `<script setup>\nimport { ref } from 'vue'\nconst role = ref('${value}')\n</script>\n\n<Select v-model="role" :options="roles" label="Role" />`;
+      if (state.framework === 'Angular') return `role = '${value}';\n\n<ui-select [options]="roles" [(value)]="role" label="Role"></ui-select>`;
+      return `const [role, setRole] = useState('${value}');\n\n<Select label="Role" options={roles} value={role} onChange={setRole} />`;
     }
     if (name === 'Dialog') {
       if (state.framework === 'Vue') return `<Dialog v-model:open="open" title="Publish changes" @close="open = false">\n  <DialogFooter><Button @click="publish">Publish</Button></DialogFooter>\n</Dialog>`;
@@ -245,6 +246,11 @@
   function vueAttrs(props) { return Object.entries(props).map(([key,value]) => value === true ? ` :${key}="true"` : typeof value === 'number' ? ` :${key}="${value}"` : ` ${key}="${quote(value)}"`).join(''); }
   function angularAttrs(props) { return Object.entries(props).map(([key,value]) => typeof value === 'boolean' || typeof value === 'number' ? ` [${key}]="${value}"` : ` ${key}="${quote(value)}"`).join(''); }
   function liveCodeExample(item, props) {
+    if (item.name === 'RangeSlider') return rangeSliderCode(props.value || [20,80], Boolean(props.disabled));
+    if (item.name === 'SegmentedControl') return segmentedCode(props.value || 'day', Boolean(props.disabled));
+    if (['Checkbox','Radio','RadioGroup','Slider'].includes(item.name)) return valueCode(item.name, props);
+    if (item.name === 'Switch') return switchCode(Boolean(props.checked), Boolean(props.disabled));
+    if (item.name === 'ToggleGroup') return toggleGroupCode(props.value || 'bold', Boolean(props.disabled));
     if (item.name === 'Input' || item.name === 'Table' || particleEffect(item.name) || item.name === 'Kbd') return codeExample(item.name, props);
     const child = props.children || '';
     const values = componentCodeProps(props, new Set(['children']));
@@ -257,12 +263,58 @@
     const props = Object.fromEntries($$('[data-option]', controls).map(input => [input.dataset.option, input.type === 'checkbox' ? input.checked : input.value]));
     const slots = $('#component-preview')._textSlots || [];
     slots.forEach(slot => { props[slot.prop] = slot.get(); });
+    if (item.name === 'Switch') props.checked = Boolean($('[data-switch]', $('#component-preview'))?.checked);
+    if (item.name === 'Checkbox') props.checked = Boolean($('[data-checkbox]', $('#component-preview'))?.checked);
+    if (item.name === 'Radio') props.checked = Boolean($('[data-radio]', $('#component-preview'))?.checked);
+    if (item.name === 'RadioGroup') props.value = $('[data-radio-group]:checked', $('#component-preview'))?.value || 'monthly';
+    if (item.name === 'Select') props.value = $('[data-select]', $('#component-preview'))?.value || 'designer';
+    if (item.name === 'Slider') props.value = Number($('[data-slider]', $('#component-preview'))?.value || 68);
+    if (item.name === 'RangeSlider') props.value = [Number($('[data-range-min]', $('#component-preview'))?.value || 20),Number($('[data-range-max]', $('#component-preview'))?.value || 80)];
+    if (item.name === 'SegmentedControl') props.value = $('[data-segment-value].active', $('#component-preview'))?.dataset.segmentValue || 'day';
+    if (item.name === 'ToggleGroup') props.value = $('[data-toggle-value].active', $('#component-preview'))?.dataset.toggleValue || 'bold';
     if (item.name === 'Kbd') props.keys = [props.modifier,props.key1,props.key2,props.key3].filter(Boolean);
     return props;
   }
   function syncFrameworkCode(item) {
     if (state.framework === 'Preview') return;
     $('#framework-content').innerHTML = codeBlock(liveCodeExample(item, previewProps(item)));
+  }
+  function switchCode(checked, disabled) {
+    const disabledReact = disabled ? ' disabled' : '';
+    const disabledVue = disabled ? ' :disabled="true"' : '';
+    const disabledAngular = disabled ? ' [disabled]="true"' : '';
+    if (state.framework === 'Vue') return `<script setup>\nimport { ref } from 'vue'\n\nconst enabled = ref(${checked})\n</script>\n\n<template>\n  <Switch v-model:checked="enabled"${disabledVue}>Product updates</Switch>\n</template>`;
+    if (state.framework === 'Angular') return `enabled = ${checked};\n\n<ui-switch [(checked)]="enabled"${disabledAngular}>Product updates</ui-switch>`;
+    return `const [enabled, setEnabled] = useState(${checked});\n\n<Switch checked={enabled} onChange={setEnabled} label="Product updates"${disabledReact} />`;
+  }
+  function valueCode(name, props) {
+    const key = name === 'Checkbox' || name === 'Radio' ? 'checked' : 'value';
+    const value = props[key]; const literal = typeof value === 'string' ? `'${value}'` : value;
+    const callback = key === 'checked' ? 'onChange' : 'onValueChange';
+    if (state.framework === 'Vue') return `<${name} v-model:${key}="model" />`;
+    if (state.framework === 'Angular') return `<ui-${slug(name)} [(${key})]="model"></ui-${slug(name)}>`;
+    return `const [model, setModel] = useState(${literal});\n\n<${name} ${key}={model} ${callback}={setModel} />`;
+  }
+  function rangeSliderCode(value, disabled) {
+    const [min,max] = value;
+    if (state.framework === 'Vue') return `<script setup>\nimport { ref } from 'vue'\nconst priceRange = ref([${min}, ${max}])\n</script>\n\n<RangeSlider v-model="priceRange" min="0" max="100"${disabled ? ' :disabled="true"' : ''} />`;
+    if (state.framework === 'Angular') return `priceRange = [${min}, ${max}];\n\n<ui-range-slider [(value)]="priceRange" [min]="0" [max]="100"${disabled ? ' [disabled]="true"' : ''}></ui-range-slider>`;
+    return `const [priceRange, setPriceRange] = useState([${min}, ${max}]);\n\n<RangeSlider value={priceRange} onValueChange={setPriceRange} min={0} max={100}${disabled ? ' disabled' : ''} />`;
+  }
+  function segmentedCode(value, disabled) {
+    const options = `[{ value: 'day', label: 'Day' }, { value: 'week', label: 'Week' }, { value: 'month', label: 'Month' }]`;
+    if (state.framework === 'Vue') return `<script setup>\nimport { ref } from 'vue'\nconst period = ref('${value}')\nconst options = ${options}\n</script>\n\n<SegmentedControl v-model="period" :options="options"${disabled ? ' :disabled="true"' : ''} />`;
+    if (state.framework === 'Angular') return `period = '${value}';\noptions = ${options};\n\n<ui-segmented-control [(value)]="period" [options]="options"${disabled ? ' [disabled]="true"' : ''}></ui-segmented-control>`;
+    return `const [period, setPeriod] = useState('${value}');\nconst options = ${options};\n\n<SegmentedControl value={period} onValueChange={setPeriod} options={options}${disabled ? ' disabled' : ''} />`;
+  }
+  function toggleGroupCode(value, disabled) {
+    const disabledReact = disabled ? ' disabled' : '';
+    const disabledVue = disabled ? ' :disabled="true"' : '';
+    const disabledAngular = disabled ? ' [disabled]="true"' : '';
+    const options = `[{ value: 'bold', label: 'Bold' }, { value: 'italic', label: 'Italic' }, { value: 'underline', label: 'Underline' }]`;
+    if (state.framework === 'Vue') return `<script setup>\nimport { ref } from 'vue'\n\nconst format = ref('${value}')\nconst options = ${options}\n</script>\n\n<template>\n  <ToggleGroup v-model="format" :options="options" aria-label="Text formatting"${disabledVue} />\n</template>`;
+    if (state.framework === 'Angular') return `format = '${value}';\noptions = ${options};\n\n<ui-toggle-group [(value)]="format" [options]="options" aria-label="Text formatting"${disabledAngular}></ui-toggle-group>`;
+    return `const [format, setFormat] = useState('${value}');\nconst options = ${options};\n\n<ToggleGroup value={format} onValueChange={setFormat} options={options} aria-label="Text formatting"${disabledReact} />`;
   }
   function kbdCode(keys) {
     if (state.framework === 'Vue') return `<span class="ui-kbd-shortcut">\n  ${keys.map(key => `<Kbd>${key}</Kbd>`).join(' + ')}\n</span>`;
@@ -319,6 +371,7 @@
     if (kind === 'Layout') contextual = `<label>${t('density')}<select data-option="density"><option value="comfortable">Comfortable</option><option value="compact">Compact</option><option value="airy">Airy</option></select></label><label>Align<select data-option="align"><option>center</option><option>start</option><option>end</option></select></label>`;
     if (kind === 'Typography') contextual = `<label>${t('size')}<select data-option="size"><option>sm</option><option selected>md</option><option>lg</option></select></label><label>Weight<select data-option="weight"><option>regular</option><option selected>medium</option><option>bold</option></select></label>`;
     if (kind === 'Forms' || kind === 'Selection') contextual = `<label>${t('state')}<select data-option="status"><option>default</option><option>success</option><option>error</option></select></label><label>${t('size')}<select data-option="size"><option>sm</option><option selected>md</option><option>lg</option></select></label>`;
+    if (item.name === 'SegmentedControl') contextual = `<label>Value<select data-option="value"><option value="day">Day</option><option value="week">Week</option><option value="month">Month</option></select></label><label>${t('size')}<select data-option="size"><option>sm</option><option selected>md</option><option>lg</option></select></label>`;
     if (kind === 'Overlay') contextual = `<label>${t('placement')}<select data-option="placement"><option>center</option><option>top</option><option>bottom</option></select></label><button class="control-action" data-action="dialog">${t('open')} ${title(item.name)}</button>`;
     if (kind === 'Feedback') contextual = `<label>Tone<select data-option="tone"><option>neutral</option><option>success</option><option>danger</option></select></label><label class="check-control"><input data-option="animated" type="checkbox" checked>Animated</label>`;
     if (kind === 'Effects') contextual = `<label>Intensity<input data-option="intensity" type="range" min="20" max="100" value="70"></label><label class="check-control"><input data-option="animated" type="checkbox" checked>Motion</label>`;
@@ -335,6 +388,8 @@
     Card:[['title','ReactNode','—','Heading content rendered in the card header.'],['actions','ReactNode','—','Header actions such as CardMenu or IconButton.'],['disabled','boolean','false','Applies a non-interactive visual state.'],['children','ReactNode','—','Card body content.']],
     Button:[['children','ReactNode','required','Label and optional icons or loading indicator.'],['onClick','() => void','—','Action callback.'],['loading','boolean','false','Replaces the label with progress feedback.'],['disabled','boolean','false','Prevents activation.']],
     Input:[['label','ReactNode','—','Visible field label.'],['hint','ReactNode','—','Supporting text displayed below the field.'],['value','string','—','Controlled value.'],['onChange','ChangeEventHandler','—','Native controlled-value callback.'],['error','ReactNode','—','Validation message and invalid state.'],['placeholder','string','—','Short input hint.'],['status','default | success | error','default','Validation state and semantic border colour.'],['size','sm | md | lg','md','Field density.'],['disabled','boolean','false','Prevents interaction.']],
+    Switch:[['checked','boolean','false','Controlled on/off value.'],['onChange','(checked: boolean) => void','—','Called when the checked value changes.'],['label','string','required','Visible and accessible switch label.'],['disabled','boolean','false','Prevents interaction.']],
+    ToggleGroup:[['value','string','first option','Controlled value of the selected option.'],['onValueChange','(value: string) => void','—','Called when a user selects an option.'],['options','ToggleGroupOption[]','required','Value and accessible label for each exclusive option.'],['disabled','boolean','false','Prevents interaction.'],['aria-label','string','required when no visible label','Accessible name for the group.']],
     Select:[['options','Option[]','required','Value/label pairs rendered in the list.'],['value','string','—','Selected value.'],['onChange','(value) => void','—','Selection callback.'],['label','ReactNode','—','Visible field label.']],
     Dialog:[['open','boolean','false','Controls visibility.'],['onClose','() => void','required','Escape, close button, and backdrop callback.'],['title','ReactNode','required','Dialog heading announced to assistive technology.'],['children','ReactNode','required','Dialog body and footer content.']],
     Tabs:[['items','Tab[]','required','Tab labels, keys, disabled state, and optional icons.'],['activeKey','string','first item','Controlled active tab.'],['onChange','(key) => void','required','Called after keyboard or pointer selection.']],
@@ -550,6 +605,7 @@
       stage.style.setProperty('--ui-primary', statusColor); stage.style.setProperty('--ui-focus-ring', statusColor); stage.style.setProperty('--ui-border-color', options.status && options.status !== 'default' ? statusColor : options.borderColor || '#8f96a8');
       $$('button,input,select,textarea', stage).forEach(element => { element.disabled = Boolean(options.disabled); });
       const primary = $('.pv-button', stage); if (primary && options.variant) primary.dataset.variant = options.variant;
+      if (item.name === 'SegmentedControl' && options.value) { $$('[data-segment-value]', stage).forEach(button => { const selected = button.dataset.segmentValue === options.value; button.classList.toggle('active', selected); button.setAttribute('aria-checked', String(selected)); }); }
       syncFrameworkCode(item);
     };
     $$('[data-option],[data-particle-option]').forEach(control => { control.addEventListener('input', updatePreview); control.addEventListener('change', updatePreview); });
@@ -691,11 +747,14 @@
     const copyCode = event.target.closest('[data-copy-code]'); if (copyCode) { navigator.clipboard.writeText(copyCode.parentElement.querySelector('code').innerText); copyCode.textContent = t('copied'); setTimeout(() => copyCode.textContent = t('copy'),1200); return; }
     const copyValue = event.target.closest('[data-copy-value]'); if (copyValue) { navigator.clipboard.writeText(copyValue.dataset.copyValue); copyValue.textContent = t('copied'); return; }
     const star = event.target.closest('[data-star]'); if (star) { const rating = Number(star.dataset.star); $$('[data-star]',star.parentElement).forEach(button => button.classList.toggle('on',Number(button.dataset.star)<=rating)); $('output',star.parentElement).textContent = rating+'.0'; return; }
-    const segment = event.target.closest('.pv-segment button,.pv-tabs button,.pv-toggle-group button'); if (segment) { $$('button',segment.parentElement).forEach(button => button.classList.remove('active')); segment.classList.add('active'); return; }
+    const segment = event.target.closest('.pv-segment button,.pv-tabs button,.pv-toggle-group button'); if (segment) { $$('button',segment.parentElement).forEach(button => { button.classList.remove('active'); if (button.matches('[data-toggle-value], [data-segment-value]')) button.setAttribute('aria-checked','false'); }); segment.classList.add('active'); if (segment.matches('[data-toggle-value], [data-segment-value]')) segment.setAttribute('aria-checked','true'); const control = $('[data-option="value"]'); if (control && segment.dataset.segmentValue) control.value = segment.dataset.segmentValue; const item = findComponent(location.hash.split('/').pop()); if (item) syncFrameworkCode(item); return; }
     const action = event.target.closest('[data-action]'); if (action) { if (!action.closest('[data-preview]') && action.dataset.action === 'dialog') { const trigger = $('#component-preview [data-action="dialog"]'); if (trigger) runAction(trigger,event); } else runAction(action,event); }
   });
   document.addEventListener('contextmenu', event => { const target = event.target.closest('[data-action="context"]'); if (target) runAction(target,event); });
-  document.addEventListener('keydown', event => { const card = event.target.closest?.('[data-component-link]'); if (card && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); location.hash = '#/'+card.dataset.componentLink; } });
+  document.addEventListener('input', event => { if (!event.target.matches('#component-preview [data-slider]')) return; event.target.closest('.pv-slider').querySelector('output').textContent = event.target.value+'%'; const item = findComponent(location.hash.split('/').pop()); if (item) syncFrameworkCode(item); });
+  document.addEventListener('input', event => { if (!event.target.matches('#component-preview [data-range-min],[data-range-max]')) return; const range = event.target.closest('.pv-range-slider'), min = $('[data-range-min]', range), max = $('[data-range-max]', range); if (Number(min.value) > Number(max.value)) { if (event.target === min) min.value = max.value; else max.value = min.value; } range.style.setProperty('--range-start', min.value+'%'); range.style.setProperty('--range-end', max.value+'%'); range.closest('.pv-slider').querySelector('output').textContent = `€${min.value} — €${max.value}`; const item = findComponent(location.hash.split('/').pop()); if (item) syncFrameworkCode(item); });
+  document.addEventListener('change', event => { if (!event.target.matches('#component-preview [data-switch],[data-checkbox],[data-radio],[data-radio-group],[data-select]')) return; const item = findComponent(location.hash.split('/').pop()); if (item) syncFrameworkCode(item); });
+  document.addEventListener('keydown', event => { const toggle = event.target.closest?.('.pv-toggle-group [data-toggle-value]'); if (toggle && ['ArrowLeft','ArrowUp','ArrowRight','ArrowDown','Home','End'].includes(event.key)) { event.preventDefault(); const options = $$('[data-toggle-value]', toggle.parentElement); const current = options.indexOf(toggle); const next = event.key === 'Home' ? options[0] : event.key === 'End' ? options.at(-1) : options[(current + (event.key === 'ArrowLeft' || event.key === 'ArrowUp' ? -1 : 1) + options.length) % options.length]; next.focus(); next.click(); return; } const card = event.target.closest?.('[data-component-link]'); if (card && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); location.hash = '#/'+card.dataset.componentLink; } });
   const dialog = $('#search-dialog'), searchInput = $('#search-input'), results = $('#search-results');
   function search(value = '') { const found = items.filter(item => (item.name+item.category+description(item)).toLowerCase().includes(value.toLowerCase())).slice(0,14); results.innerHTML = found.length ? found.map(item => `<a class="search-item" href="#/components/${slug(item.name)}"><strong>${title(item.name)}</strong><small>${item.category} · ${description(item)}</small></a>`).join('') : `<p class="empty-search">${state.locale === 'it' ? 'Nessun componente trovato.' : 'No components found.'}</p>`; }
   $('#search-trigger').addEventListener('click',() => { dialog.showModal(); searchInput.value=''; search(); searchInput.focus(); }); searchInput.addEventListener('input', event => search(event.target.value)); dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });

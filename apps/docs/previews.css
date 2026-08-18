@@ -508,16 +508,32 @@ body {
   height: 1.5rem;
   padding: 0.2rem;
   border-radius: 99rem;
-  background: var(--ui-primary);
+  background: var(--ui-border-color);
+  transition: background var(--ui-transition-duration, 160ms) ease;
 }
 .pv-switch > span:after {
   content: "";
   display: block;
   width: 1.1rem;
   height: 1.1rem;
-  margin-left: 1.2rem;
+  margin-left: 0;
   border-radius: 50%;
   background: #fff;
+  transition: transform var(--ui-transition-duration, 160ms) ease;
+}
+.pv-switch input:checked + span {
+  background: var(--ui-primary);
+}
+.pv-switch input:checked + span:after {
+  transform: translateX(1.2rem);
+}
+.pv-switch input:focus-visible + span {
+  outline: 2px solid var(--ui-focus-ring, var(--ui-primary));
+  outline-offset: 2px;
+}
+.pv-switch input:disabled + span {
+  cursor: not-allowed;
+  opacity: .55;
 }
 .pv-multiselect {
   display: flex;
@@ -614,32 +630,40 @@ body {
 .pv-slider input {
   accent-color: var(--ui-primary);
 }
-.pv-range-track {
+.pv-range-slider {
   position: relative;
-  height: 0.35rem;
-  border-radius: 1rem;
-  background: linear-gradient(
-    90deg,
-    var(--ui-border-color) 0 20%,
-    var(--ui-primary) 20% 80%,
-    var(--ui-border-color) 80%
-  );
+  height: 1.5rem;
 }
-.pv-range-track b {
+.pv-range-slider > i {
   position: absolute;
   top: 50%;
-  width: 1rem;
-  height: 1rem;
+  right: 0;
+  left: 0;
+  height: .35rem;
+  border-radius: 1rem;
+  transform: translateY(-50%);
+  background: linear-gradient(90deg,var(--ui-border-color) 0 var(--range-start),var(--ui-primary) var(--range-start) var(--range-end),var(--ui-border-color) var(--range-end) 100%);
+}
+.pv-range-slider input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+.pv-range-slider input::-webkit-slider-thumb {
+  width: 1.25rem;
+  height: 1.25rem;
+  appearance: none;
   border: 3px solid var(--ui-primary);
   border-radius: 50%;
   background: var(--ui-surface);
-  transform: translate(-50%, -50%);
+  cursor: grab;
+  pointer-events: auto;
 }
-.pv-range-track b:first-of-type {
-  left: 20%;
-}
-.pv-range-track b:last-of-type {
-  left: 80%;
+.pv-range-slider input:disabled::-webkit-slider-thumb { cursor: not-allowed; }
 }
 .pv-rating {
   display: flex;
